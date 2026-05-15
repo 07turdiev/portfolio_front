@@ -1,4 +1,5 @@
 <script setup>
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePortfolioData } from '../composables/usePortfolioData'
 import { formatNumber } from '../utils/format'
@@ -16,6 +17,28 @@ const {
 } = usePortfolioData()
 
 const PHOTO = '/img/person-placeholder.jpg'
+
+// Advanced filter state — options will be wired when API data is available
+const advancedOpen = ref(false)
+const awardCategory = ref('')
+const awardType = ref('')
+const awardName = ref('')
+
+// Cascading reset: when category changes, type/name reset; type → name resets
+watch(awardCategory, () => {
+  awardType.value = ''
+  awardName.value = ''
+})
+watch(awardType, () => {
+  awardName.value = ''
+})
+
+function resetAllFilters() {
+  resetFilters()
+  awardCategory.value = ''
+  awardType.value = ''
+  awardName.value = ''
+}
 </script>
 
 <template>
@@ -23,7 +46,9 @@ const PHOTO = '/img/person-placeholder.jpg'
     class="lg:col-span-6 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col p-6 overflow-hidden min-h-0"
   >
     <!-- Combined filter + search row -->
-    <div class="grid grid-cols-[auto_auto_1fr_auto] gap-2 mb-3 shrink-0">
+    <div
+      class="grid grid-cols-[auto_auto_1fr_auto_auto] gap-2 mb-3 shrink-0"
+    >
       <!-- Gender -->
       <div class="relative">
         <select
@@ -99,10 +124,37 @@ const PHOTO = '/img/person-placeholder.jpg'
         />
       </div>
 
+      <!-- Advanced filter toggle -->
+      <button
+        type="button"
+        @click="advancedOpen = !advancedOpen"
+        :title="t('filter.advanced')"
+        :class="[
+          'border px-3 py-2.5 rounded-lg flex items-center justify-center transition-colors',
+          advancedOpen
+            ? 'bg-brand-primary text-white border-brand-primary'
+            : 'bg-white border-gray-200 text-brand-dark hover:text-brand-primary hover:border-brand-primary'
+        ]"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 6h18M6 12h12M10 18h4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+
       <!-- Reset -->
       <button
         type="button"
-        @click="resetFilters"
+        @click="resetAllFilters"
         :title="t('filter.reset')"
         class="bg-white border border-gray-200 text-brand-dark hover:text-brand-primary hover:border-brand-primary px-3 py-2.5 rounded-lg flex items-center justify-center transition-colors"
       >
@@ -121,6 +173,90 @@ const PHOTO = '/img/person-placeholder.jpg'
         </svg>
       </button>
     </div>
+
+    <!-- Advanced filter panel (slide open) -->
+    <Transition
+      enter-active-class="transition-all duration-200 ease-out overflow-hidden"
+      enter-from-class="opacity-0 max-h-0"
+      enter-to-class="opacity-100 max-h-[200px]"
+      leave-active-class="transition-all duration-150 ease-in overflow-hidden"
+      leave-from-class="opacity-100 max-h-[200px]"
+      leave-to-class="opacity-0 max-h-0"
+    >
+      <div
+        v-if="advancedOpen"
+        class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3 shrink-0"
+      >
+        <div class="relative">
+          <select
+            v-model="awardCategory"
+            class="w-full appearance-none bg-gray-50 border border-gray-200 text-brand-dark font-medium text-sm pl-3 pr-9 py-2.5 rounded-lg cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors"
+            :title="t('filter.awardCategory')"
+          >
+            <option value="">{{ t('filter.allAwardCategories') }}</option>
+          </select>
+          <svg
+            class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 9l-7 7-7-7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+        <div class="relative">
+          <select
+            v-model="awardType"
+            :disabled="!awardCategory"
+            class="w-full appearance-none bg-gray-50 border border-gray-200 text-brand-dark font-medium text-sm pl-3 pr-9 py-2.5 rounded-lg cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50"
+            :title="t('filter.awardType')"
+          >
+            <option value="">{{ t('filter.allAwardTypes') }}</option>
+          </select>
+          <svg
+            class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 9l-7 7-7-7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+        <div class="relative">
+          <select
+            v-model="awardName"
+            :disabled="!awardType"
+            class="w-full appearance-none bg-gray-50 border border-gray-200 text-brand-dark font-medium text-sm pl-3 pr-9 py-2.5 rounded-lg cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50"
+            :title="t('filter.awardName')"
+          >
+            <option value="">{{ t('filter.allAwardNames') }}</option>
+          </select>
+          <svg
+            class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 9l-7 7-7-7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+      </div>
+    </Transition>
 
     <!-- Summary -->
     <div

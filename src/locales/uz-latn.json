@@ -63,7 +63,14 @@
     "sortBirthAsc": "Yoshi bo'yicha (kattadan)",
     "sortBirthDesc": "Yoshi bo'yicha (kichikdan)",
     "sortRegion": "Hudud bo'yicha",
-    "reset": "Tozalash"
+    "reset": "Tozalash",
+    "advanced": "Kengaytirilgan filtr",
+    "awardCategory": "Mukofot mansubligi",
+    "awardType": "Mukofot turi",
+    "awardName": "Mukofot nomi",
+    "allAwardCategories": "Barcha mansubliklar",
+    "allAwardTypes": "Barcha turlari",
+    "allAwardNames": "Barcha nomlari"
   },
   "portfolio": {
     "title": "PORTFOLIO",

@@ -63,7 +63,14 @@
     "sortBirthAsc": "По возрасту (старше)",
     "sortBirthDesc": "По возрасту (моложе)",
     "sortRegion": "По региону",
-    "reset": "Очистить"
+    "reset": "Очистить",
+    "advanced": "Расширенный фильтр",
+    "awardCategory": "Принадлежность награды",
+    "awardType": "Тип награды",
+    "awardName": "Название награды",
+    "allAwardCategories": "Все принадлежности",
+    "allAwardTypes": "Все типы",
+    "allAwardNames": "Все названия"
   },
   "portfolio": {
     "title": "ПОРТФОЛИО",

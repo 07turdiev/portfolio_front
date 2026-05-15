@@ -63,7 +63,14 @@
     "sortBirthAsc": "Ёши бўйича (каттадан)",
     "sortBirthDesc": "Ёши бўйича (кичикдан)",
     "sortRegion": "Ҳудуд бўйича",
-    "reset": "Тозалаш"
+    "reset": "Тозалаш",
+    "advanced": "Кенгайтирилган фильтр",
+    "awardCategory": "Мукофот мансублиги",
+    "awardType": "Мукофот тури",
+    "awardName": "Мукофот номи",
+    "allAwardCategories": "Барча мансубликлар",
+    "allAwardTypes": "Барча турлари",
+    "allAwardNames": "Барча номлари"
   },
   "portfolio": {
     "title": "ПОРТФОЛИО",
