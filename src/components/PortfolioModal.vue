@@ -17,16 +17,30 @@ const {
 
 const person = computed(() => selectedPerson.value)
 
+function placeLabel(districtName, regionKey) {
+  if (!regionKey) return ''
+  const region = t(`regions.names.${regionKey}`)
+  return districtName ? `${districtName}, ${region}` : region
+}
+
 const personalRows = computed(() => {
   if (!person.value) return []
   const p = person.value.personal
+  const person_ = person.value
   return [
     { l: t('portfolio.lastName'), v: p.lastName },
     { l: t('portfolio.firstName'), v: p.firstName },
     { l: t('portfolio.middleName'), v: p.middleName },
     { l: t('portfolio.nationality'), v: p.nationality },
     { l: t('portfolio.birthDate'), v: p.birthDate },
-    { l: t('portfolio.birthPlace'), v: p.birthPlace }
+    {
+      l: t('portfolio.birthPlace'),
+      v: placeLabel(person_.birthDistrictName, person_.birthRegionKey)
+    },
+    {
+      l: t('portfolio.residence'),
+      v: placeLabel(person_.districtName, person_.regionKey)
+    }
   ]
 })
 

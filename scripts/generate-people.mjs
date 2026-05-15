@@ -259,10 +259,27 @@ function buildPerson(dir, idx) {
     pick(rng, PATRONYMIC_BASE) + (gender === 'male' ? 'ovich' : 'ovna')
   const fullName = `${lastName} ${firstName} ${middleName}`
 
-  const regionKey = pick(rng, REGION_KEYS)
-  const regionName = REGIONS[regionKey]
-  const districtList = DISTRICTS[regionKey]?.districts ?? []
-  const district = districtList.length ? pick(rng, districtList) : null
+  // Birth location
+  const birthRegionKey = pick(rng, REGION_KEYS)
+  const birthRegionName = REGIONS[birthRegionKey]
+  const birthDistrictList = DISTRICTS[birthRegionKey]?.districts ?? []
+  const birthDistrict = birthDistrictList.length
+    ? pick(rng, birthDistrictList)
+    : null
+
+  // Current residence (~30% have moved to a different region)
+  const moved = rng() < 0.3
+  let regionKey, regionName, district
+  if (moved) {
+    regionKey = pick(rng, REGION_KEYS)
+    regionName = REGIONS[regionKey]
+    const list = DISTRICTS[regionKey]?.districts ?? []
+    district = list.length ? pick(rng, list) : null
+  } else {
+    regionKey = birthRegionKey
+    regionName = birthRegionName
+    district = birthDistrict
+  }
 
   const birthYear = int(rng, 1948, 1992)
   const birthDate = `${String(int(rng, 1, 28)).padStart(2, '0')}.${pick(rng, MONTHS)}.${birthYear}`
@@ -330,9 +347,14 @@ function buildPerson(dir, idx) {
   return {
     id,
     directionKey: dir.key,
+    // Residence (used for map markers + region/district filters)
     regionKey,
     districtId: district?.id ?? null,
     districtName: district?.name ?? null,
+    // Birth (display only)
+    birthRegionKey,
+    birthDistrictId: birthDistrict?.id ?? null,
+    birthDistrictName: birthDistrict?.name ?? null,
     gender,
     fullName,
     personal: {
@@ -341,7 +363,12 @@ function buildPerson(dir, idx) {
       middleName,
       nationality: pick(rng, NATIONALITIES),
       birthDate,
-      birthPlace: regionName
+      birthPlace: birthDistrict
+        ? `${birthDistrict.name}, ${birthRegionName}`
+        : birthRegionName,
+      residencePlace: district
+        ? `${district.name}, ${regionName}`
+        : regionName
     },
     family: {
       maritalStatus,
