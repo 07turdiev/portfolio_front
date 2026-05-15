@@ -24,3 +24,8 @@ export async function fetchAwards() {
   const { data } = await http.get('/awards.json')
   return data
 }
+
+export async function fetchAwardTaxonomy() {
+  const { data } = await http.get('/award-taxonomy.json')
+  return data
+}

@@ -70,7 +70,14 @@
     "awardName": "Мукофот номи",
     "allAwardCategories": "Барча мансубликлар",
     "allAwardTypes": "Барча турлари",
-    "allAwardNames": "Барча номлари"
+    "allAwardNames": "Барча номлари",
+    "affiliations": {
+      "state": "Давлат мукофотлари",
+      "karakalpakstan": "Қорақалпоғистон Республикаси мукофотлари",
+      "ministry": "Вазирлик ва идораларнинг мукофотлари",
+      "foreign": "Турли давлатлар мукофотлари",
+      "international": "Халқаро ташкилотлар мукофотлари"
+    }
   },
   "portfolio": {
     "title": "ПОРТФОЛИО",

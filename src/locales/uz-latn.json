@@ -70,7 +70,14 @@
     "awardName": "Mukofot nomi",
     "allAwardCategories": "Barcha mansubliklar",
     "allAwardTypes": "Barcha turlari",
-    "allAwardNames": "Barcha nomlari"
+    "allAwardNames": "Barcha nomlari",
+    "affiliations": {
+      "state": "Davlat mukofotlari",
+      "karakalpakstan": "Qoraqalpog'iston Respublikasi mukofotlari",
+      "ministry": "Vazirlik va idoralarning mukofotlari",
+      "foreign": "Turli davlatlar mukofotlari",
+      "international": "Xalqaro tashkilotlar mukofotlari"
+    }
   },
   "portfolio": {
     "title": "PORTFOLIO",

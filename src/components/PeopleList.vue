@@ -1,7 +1,8 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePortfolioData } from '../composables/usePortfolioData'
+import { fetchAwardTaxonomy } from '../services/api'
 import { formatNumber } from '../utils/format'
 
 const { t } = useI18n()
@@ -23,6 +24,36 @@ const advancedOpen = ref(false)
 const awardCategory = ref('')
 const awardType = ref('')
 const awardName = ref('')
+
+// Award taxonomy (loaded from JSON, as if from API)
+const awardTaxonomy = ref({ affiliations: [] })
+
+onMounted(async () => {
+  try {
+    awardTaxonomy.value = await fetchAwardTaxonomy()
+  } catch (e) {
+    awardTaxonomy.value = { affiliations: [] }
+  }
+})
+
+const affiliationOptions = computed(() =>
+  (awardTaxonomy.value.affiliations || []).map((a) => ({
+    key: a.key,
+    label: t(`filter.affiliations.${a.key}`)
+  }))
+)
+
+const typeOptions = computed(() => {
+  const aff = (awardTaxonomy.value.affiliations || []).find(
+    (a) => a.key === awardCategory.value
+  )
+  return aff?.types ?? []
+})
+
+const nameOptions = computed(() => {
+  const type = typeOptions.value.find((t) => t.key === awardType.value)
+  return type?.names ?? []
+})
 
 // Cascading reset: when category changes, type/name reset; type → name resets
 watch(awardCategory, () => {
@@ -194,6 +225,13 @@ function resetAllFilters() {
             :title="t('filter.awardCategory')"
           >
             <option value="">{{ t('filter.allAwardCategories') }}</option>
+            <option
+              v-for="opt in affiliationOptions"
+              :key="opt.key"
+              :value="opt.key"
+            >
+              {{ opt.label }}
+            </option>
           </select>
           <svg
             class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
@@ -217,6 +255,13 @@ function resetAllFilters() {
             :title="t('filter.awardType')"
           >
             <option value="">{{ t('filter.allAwardTypes') }}</option>
+            <option
+              v-for="opt in typeOptions"
+              :key="opt.key"
+              :value="opt.key"
+            >
+              {{ t(`filter.types.${opt.key}`, opt.key) }}
+            </option>
           </select>
           <svg
             class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
@@ -240,6 +285,13 @@ function resetAllFilters() {
             :title="t('filter.awardName')"
           >
             <option value="">{{ t('filter.allAwardNames') }}</option>
+            <option
+              v-for="opt in nameOptions"
+              :key="opt.key"
+              :value="opt.key"
+            >
+              {{ t(`filter.names.${opt.key}`, opt.key) }}
+            </option>
           </select>
           <svg
             class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"

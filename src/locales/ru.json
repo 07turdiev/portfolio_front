@@ -70,7 +70,14 @@
     "awardName": "Название награды",
     "allAwardCategories": "Все принадлежности",
     "allAwardTypes": "Все типы",
-    "allAwardNames": "Все названия"
+    "allAwardNames": "Все названия",
+    "affiliations": {
+      "state": "Государственные награды",
+      "karakalpakstan": "Награды Республики Каракалпакстан",
+      "ministry": "Награды министерств и ведомств",
+      "foreign": "Награды различных государств",
+      "international": "Награды международных организаций"
+    }
   },
   "portfolio": {
     "title": "ПОРТФОЛИО",
