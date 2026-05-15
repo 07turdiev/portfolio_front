@@ -51,6 +51,20 @@
     "empty": "Hech narsa topilmadi",
     "all": "Barcha hududlar"
   },
+  "filter": {
+    "allRegions": "Barcha viloyatlar",
+    "allDistricts": "Barcha tumanlar",
+    "allGenders": "Barcha jinslar",
+    "male": "Erkaklar",
+    "female": "Ayollar",
+    "sortLabel": "Saralash",
+    "sortNameAsc": "Ism (A–Z)",
+    "sortNameDesc": "Ism (Z–A)",
+    "sortBirthAsc": "Yoshi bo'yicha (kattadan)",
+    "sortBirthDesc": "Yoshi bo'yicha (kichikdan)",
+    "sortRegion": "Hudud bo'yicha",
+    "reset": "Tozalash"
+  },
   "portfolio": {
     "title": "PORTFOLIO",
     "personal": "SHAXSIY MA'LUMOTLAR",
@@ -92,6 +106,7 @@
     "title": "Tug'ilgan kunlar kalendari",
     "upcoming": "Eng yaqin tug'ilgan kun",
     "daysLeft": "{n} kun qoldi",
+    "daysLabel": "kun qoldi",
     "today": "Bugun",
     "empty": "Bu oyda tug'ilgan kunlar yo'q",
     "months": [
@@ -100,14 +115,13 @@
     ],
     "weekdays": ["Du", "Se", "Ch", "Pa", "Ju", "Sh", "Ya"]
   },
-  "categories": {
-    "parties": "Siyosiy partiyalar uchun",
-    "candidates": "Nomzodlar uchun",
-    "local_observers": "Mahalliy kuzatuvchilar uchun",
-    "foreign_observers": "Xorijiy kuzatuvchilar uchun",
-    "local_media": "Mahalliy OAV uchun",
-    "foreign_media": "Xorijiy OAV uchun",
-    "voters": "Saylovchilar uchun"
+  "awards": {
+    "title": "Davlat mukofotlari",
+    "hero": "«O'zbekiston Qahramoni» unvoni",
+    "honorary_titles": "O'zbekiston Respublikasining faxriy unvonlari",
+    "orders": "O'zbekiston Respublikasining ordenlari",
+    "medals": "O'zbekiston Respublikasining medallari",
+    "honorary_diploma": "O'zbekiston Respublikasining Faxriy yorlig'i"
   },
   "footer": {
     "copyright": "© 2026 O'zbekiston Respublikasi Madaniyat vazirligi. Barcha huquqlar himoyalangan.",

@@ -5,7 +5,7 @@ import DirectionsSection from './components/DirectionsSection.vue'
 import MapSection from './components/MapSection.vue'
 import PeopleList from './components/PeopleList.vue'
 import BirthdayCalendar from './components/BirthdayCalendar.vue'
-import CategoryGrid from './components/CategoryGrid.vue'
+import AwardsSection from './components/AwardsSection.vue'
 import MainFooter from './components/MainFooter.vue'
 import PortfolioModal from './components/PortfolioModal.vue'
 import { usePortfolioData } from './composables/usePortfolioData'
@@ -30,7 +30,7 @@ onMounted(load)
 
     <BirthdayCalendar />
 
-    <CategoryGrid />
+    <AwardsSection />
   </main>
 
   <MainFooter />

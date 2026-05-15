@@ -8,9 +8,10 @@ const {
   filteredPeople,
   peopleSummary,
   searchQuery,
-  selectedRegionKey,
+  genderFilter,
+  sortBy,
   peopleLoading,
-  backToCountry,
+  resetFilters,
   openPerson
 } = usePortfolioData()
 
@@ -21,120 +22,90 @@ const PHOTO = '/img/person-placeholder.jpg'
   <div
     class="lg:col-span-6 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col p-6 overflow-hidden min-h-0"
   >
-    <!-- Search -->
-    <div class="relative mb-4">
-      <svg
-        class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
+    <!-- Combined filter + search row -->
+    <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 mb-3 shrink-0">
+      <!-- Search -->
+      <div class="relative">
+        <svg
+          class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+        <input
+          v-model="searchQuery"
+          type="text"
+          :placeholder="t('people.searchPlaceholder')"
+          class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-brand-text placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary"
         />
-      </svg>
-      <input
-        v-model="searchQuery"
-        type="text"
-        :placeholder="t('people.searchPlaceholder')"
-        class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-brand-text placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary"
-      />
-    </div>
-
-    <!-- Summary -->
-    <div
-      class="bg-[#eef2f6] rounded-xl p-3 px-4 flex flex-wrap md:flex-nowrap items-center justify-between gap-4 mb-3"
-    >
-      <div class="flex items-center gap-4 w-full md:w-auto">
-        <div class="bg-brand-dark text-white p-3 rounded-lg shrink-0">
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </svg>
-        </div>
-        <div>
-          <div class="text-sm text-brand-muted font-medium">
-            {{ t('people.totalLabel') }}
-          </div>
-          <div class="font-bold text-brand-dark text-xl leading-none mt-1">
-            {{ formatNumber(peopleSummary.total) }}
-          </div>
-        </div>
       </div>
-      <div class="flex gap-2 w-full md:w-auto shrink-0">
-        <div
-          class="bg-[#d5dfed] px-4 py-2 rounded-lg flex items-center gap-3 w-1/2 md:w-[150px]"
-        >
-          <svg
-            class="w-5 h-5 text-brand-dark/70"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              fill-rule="evenodd"
-            />
-          </svg>
-          <div>
-            <div
-              class="text-[11px] text-brand-dark/70 font-semibold uppercase tracking-wider"
-            >
-              {{ t('people.men') }}
-            </div>
-            <div class="font-bold text-brand-dark leading-tight">
-              {{ formatNumber(peopleSummary.men) }}
-            </div>
-          </div>
-        </div>
-        <div
-          class="bg-[#c2d0e1] px-4 py-2 rounded-lg flex items-center gap-3 w-1/2 md:w-[150px]"
-        >
-          <svg
-            class="w-5 h-5 text-brand-dark/70"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              fill-rule="evenodd"
-            />
-          </svg>
-          <div>
-            <div
-              class="text-[11px] text-brand-dark/70 font-semibold uppercase tracking-wider"
-            >
-              {{ t('people.women') }}
-            </div>
-            <div class="font-bold text-brand-dark leading-tight">
-              {{ formatNumber(peopleSummary.women) }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Active region filter chip -->
-    <div v-if="selectedRegionKey" class="mb-3">
+      <!-- Gender -->
+      <div class="relative">
+        <select
+          v-model="genderFilter"
+          class="appearance-none bg-gray-50 border border-gray-200 text-brand-dark font-medium text-sm pl-3 pr-9 py-2.5 rounded-lg cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors"
+        >
+          <option value="all">{{ t('filter.allGenders') }}</option>
+          <option value="male">{{ t('filter.male') }}</option>
+          <option value="female">{{ t('filter.female') }}</option>
+        </select>
+        <svg
+          class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 9l-7 7-7-7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </div>
+
+      <!-- Sort -->
+      <div class="relative">
+        <select
+          v-model="sortBy"
+          class="appearance-none bg-gray-50 border border-gray-200 text-brand-dark font-medium text-sm pl-3 pr-9 py-2.5 rounded-lg cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors"
+        >
+          <option value="name-asc">{{ t('filter.sortNameAsc') }}</option>
+          <option value="name-desc">{{ t('filter.sortNameDesc') }}</option>
+          <option value="birth-asc">{{ t('filter.sortBirthAsc') }}</option>
+          <option value="birth-desc">{{ t('filter.sortBirthDesc') }}</option>
+          <option value="region">{{ t('filter.sortRegion') }}</option>
+        </select>
+        <svg
+          class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 9l-7 7-7-7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </div>
+
+      <!-- Reset -->
       <button
         type="button"
-        @click="backToCountry"
-        class="inline-flex items-center gap-2 bg-[#f0f4ff] text-brand-primary text-sm font-medium pl-3 pr-2 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
+        @click="resetFilters"
+        :title="t('filter.reset')"
+        class="bg-white border border-gray-200 text-brand-dark hover:text-brand-primary hover:border-brand-primary px-3 py-2.5 rounded-lg flex items-center justify-center transition-colors"
       >
-        {{ t(`regions.names.${selectedRegionKey}`) }}
         <svg
           class="w-4 h-4"
           fill="none"
@@ -142,13 +113,57 @@ const PHOTO = '/img/person-placeholder.jpg'
           viewBox="0 0 24 24"
         >
           <path
-            d="M6 18L18 6M6 6l12 12"
+            d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114-3M20 14a8 8 0 01-14 3"
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
           />
         </svg>
       </button>
+    </div>
+
+    <!-- Summary -->
+    <div
+      class="bg-[#f5f8ff] border border-blue-100 rounded-lg overflow-hidden mb-3 shrink-0"
+    >
+      <div class="grid grid-cols-3 divide-x divide-blue-100">
+        <div class="px-3 py-2.5 text-center">
+          <div
+            class="text-[10px] uppercase tracking-wider text-brand-muted font-semibold"
+          >
+            {{ t('people.totalLabel') }}
+          </div>
+          <div
+            class="text-xl font-bold text-brand-dark mt-1 tabular-nums"
+          >
+            {{ formatNumber(peopleSummary.total) }}
+          </div>
+        </div>
+        <div class="px-3 py-2.5 text-center">
+          <div
+            class="text-[10px] uppercase tracking-wider text-brand-muted font-semibold"
+          >
+            {{ t('people.men') }}
+          </div>
+          <div
+            class="text-xl font-bold text-brand-dark mt-1 tabular-nums"
+          >
+            {{ formatNumber(peopleSummary.men) }}
+          </div>
+        </div>
+        <div class="px-3 py-2.5 text-center">
+          <div
+            class="text-[10px] uppercase tracking-wider text-brand-muted font-semibold"
+          >
+            {{ t('people.women') }}
+          </div>
+          <div
+            class="text-xl font-bold text-brand-dark mt-1 tabular-nums"
+          >
+            {{ formatNumber(peopleSummary.women) }}
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- People list -->

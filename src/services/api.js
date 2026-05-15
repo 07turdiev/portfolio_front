@@ -19,3 +19,8 @@ export async function fetchDistrictMap(regionKey) {
   const { data } = await http.get(`/districts/${regionKey}.json`)
   return data
 }
+
+export async function fetchAwards() {
+  const { data } = await http.get('/awards.json')
+  return data
+}

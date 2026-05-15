@@ -11,6 +11,8 @@ const selectedDirectionKey = ref(ALL_KEY)
 const selectedRegionKey = ref(null)
 const selectedDistrictId = ref(null)
 const searchQuery = ref('')
+const genderFilter = ref('all') // 'all' | 'male' | 'female'
+const sortBy = ref('name-asc') // 'name-asc' | 'name-desc' | 'birth-asc' | 'birth-desc' | 'region'
 
 const peopleByDirection = ref({})
 const districtMaps = ref({})
@@ -67,7 +69,14 @@ const currentDistrictMap = computed(() => {
   return districtMaps.value[selectedRegionKey.value] || null
 })
 
-// people filtered by selected region, district and search text
+function birthEpoch(p) {
+  const s = p.personal?.birthDate
+  if (!s) return 0
+  const [d, m, y] = s.split('.').map(Number)
+  return new Date(y || 0, (m || 1) - 1, d || 1).getTime()
+}
+
+// people filtered by region, district, gender, search; then sorted
 const filteredPeople = computed(() => {
   let list = currentPeople.value
   if (selectedRegionKey.value) {
@@ -76,6 +85,9 @@ const filteredPeople = computed(() => {
   if (selectedDistrictId.value) {
     list = list.filter((p) => p.districtId === selectedDistrictId.value)
   }
+  if (genderFilter.value !== 'all') {
+    list = list.filter((p) => p.gender === genderFilter.value)
+  }
   const q = searchQuery.value.trim().toLowerCase()
   if (q) {
     list = list.filter(
@@ -83,6 +95,24 @@ const filteredPeople = computed(() => {
         p.fullName.toLowerCase().includes(q) ||
         (p.work?.position || '').toLowerCase().includes(q)
     )
+  }
+  list = [...list]
+  switch (sortBy.value) {
+    case 'name-asc':
+      list.sort((a, b) => a.fullName.localeCompare(b.fullName))
+      break
+    case 'name-desc':
+      list.sort((a, b) => b.fullName.localeCompare(a.fullName))
+      break
+    case 'birth-asc':
+      list.sort((a, b) => birthEpoch(a) - birthEpoch(b))
+      break
+    case 'birth-desc':
+      list.sort((a, b) => birthEpoch(b) - birthEpoch(a))
+      break
+    case 'region':
+      list.sort((a, b) => a.regionKey.localeCompare(b.regionKey))
+      break
   }
   return list
 })
@@ -159,20 +189,25 @@ export function usePortfolioData() {
     await loadPeople(key)
   }
 
-  async function selectRegion(key) {
+  function selectRegion(key) {
     selectedRegionKey.value = key
     selectedDistrictId.value = null
-    if (key && !districtMaps.value[key]) {
-      try {
-        districtMaps.value[key] = await fetchDistrictMap(key)
-      } catch (e) {
-        error.value = e
-      }
-    }
   }
 
   function selectDistrict(id) {
     selectedDistrictId.value = selectedDistrictId.value === id ? null : id
+  }
+
+  function setDistrict(id) {
+    selectedDistrictId.value = id || null
+  }
+
+  function resetFilters() {
+    searchQuery.value = ''
+    genderFilter.value = 'all'
+    sortBy.value = 'name-asc'
+    selectedRegionKey.value = null
+    selectedDistrictId.value = null
   }
 
   function backToCountry() {
@@ -212,6 +247,8 @@ export function usePortfolioData() {
     filteredPeople,
     peopleSummary,
     searchQuery,
+    genderFilter,
+    sortBy,
     peopleLoading,
     selectedPerson,
     selectedPersonIndex,
@@ -223,6 +260,8 @@ export function usePortfolioData() {
     selectDirection,
     selectRegion,
     selectDistrict,
+    setDistrict,
+    resetFilters,
     backToCountry,
     openPerson,
     closePerson,

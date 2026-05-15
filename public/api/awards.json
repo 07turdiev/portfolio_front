@@ -1,0 +1,29 @@
+{
+  "awards": [
+    {
+      "key": "hero",
+      "icon": "hero-star",
+      "url": "https://lex.uz/docs/-107317"
+    },
+    {
+      "key": "honorary_titles",
+      "icon": "honorary-ribbon",
+      "url": "https://lex.uz/docs/-107317"
+    },
+    {
+      "key": "orders",
+      "icon": "order",
+      "url": "https://lex.uz/docs/-3676244?ONDATE=19.03.2025#-3677129"
+    },
+    {
+      "key": "medals",
+      "icon": "medal",
+      "url": "https://lex.uz/uz/search/?text=medal"
+    },
+    {
+      "key": "honorary_diploma",
+      "icon": "diploma",
+      "url": "https://lex.uz/docs/-1560390?ONDATE=21.04.2021"
+    }
+  ]
+}

@@ -77,7 +77,7 @@ const upcomingDaysText = computed(() => {
   if (!upcoming.value) return ''
   const n = upcoming.value.daysLeft
   if (n === 0) return t('calendar.today')
-  return t('calendar.daysLeft', { n })
+  return t('calendar.daysLabel')
 })
 
 const calendarDays = computed(() => {
@@ -157,92 +157,50 @@ function goToToday() {
   <section
     class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-5"
   >
-    <!-- Upcoming birthday — formal banner at top -->
+    <!-- Upcoming birthday — clean minimal -->
     <button
       v-if="upcoming"
       type="button"
       @click="openPerson(upcoming.person)"
-      class="group relative w-full bg-[#f5f8ff] border border-blue-100 rounded-lg overflow-hidden text-left hover:shadow-md transition-shadow"
+      class="w-full bg-white border border-gray-200 rounded-lg p-5 text-left hover:shadow-md transition-shadow"
     >
-      <span
-        class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand-primary"
-      ></span>
       <div
-        class="pl-6 pr-5 py-4 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-4 md:gap-6"
+        class="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-primary mb-4"
       >
-        <div class="border-2 border-brand-primary p-0.5 bg-white shrink-0">
-          <img
-            :src="PHOTO"
-            :alt="upcoming.person.fullName"
-            class="w-[68px] h-[84px] object-cover"
-          />
-        </div>
+        {{ t('calendar.upcoming') }}
+      </div>
 
-        <div class="min-w-0">
-          <div class="flex items-center gap-2 mb-1.5">
-            <svg
-              class="w-4 h-4 text-brand-primary shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M5 13c0-1.1.9-2 2-2h10a2 2 0 012 2v6H5v-6z"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-              <path
-                d="M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0M9 11V8m3 3V8m3 3V8M12 5l-1.5-2m1.5 2l1.5-2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-            </svg>
-            <span
-              class="text-[11px] uppercase tracking-[0.25em] font-bold text-brand-primary"
-            >
-              {{ t('calendar.upcoming') }}
-            </span>
-          </div>
-          <div
+      <div
+        class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-5 md:gap-6"
+      >
+        <img
+          :src="PHOTO"
+          :alt="upcoming.person.fullName"
+          class="w-[80px] h-[100px] object-cover shrink-0 mx-auto md:mx-0 rounded-md"
+        />
+
+        <div class="min-w-0 text-center md:text-left">
+          <h3
             class="text-xl md:text-2xl font-bold text-brand-dark leading-tight"
           >
             {{ upcoming.person.fullName }}
-          </div>
-          <div class="text-sm text-brand-muted mt-0.5 truncate">
+          </h3>
+          <p class="text-sm text-brand-muted mt-1 truncate">
             {{ upcoming.person.work.position }}
-          </div>
-          <div
-            class="flex items-center gap-1.5 mt-2 text-sm font-semibold text-brand-dark"
-          >
-            <svg
-              class="w-4 h-4 text-brand-primary"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-            </svg>
+          </p>
+          <p class="text-sm font-semibold text-brand-dark mt-2">
             {{ upcomingDateLabel }}
-          </div>
+          </p>
         </div>
 
-        <div
-          class="md:border-l md:border-blue-200 md:pl-6 text-center shrink-0"
-        >
+        <div class="text-center shrink-0">
           <div
-            class="text-5xl font-bold text-brand-primary leading-none tabular-nums"
+            class="text-5xl md:text-6xl font-bold text-brand-primary leading-none tabular-nums"
           >
             {{ upcoming.daysLeft }}
           </div>
           <div
-            class="text-[10px] uppercase tracking-[0.25em] font-semibold text-brand-muted mt-2"
+            class="text-[11px] uppercase tracking-wider text-brand-muted font-semibold mt-2"
           >
             {{ upcomingDaysText }}
           </div>
