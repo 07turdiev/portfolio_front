@@ -157,98 +157,160 @@ function goToToday() {
   <section
     class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-5"
   >
-    <div class="flex items-center justify-between gap-4 flex-wrap">
-      <h2 class="text-xl font-bold text-brand-dark">
-        {{ t('calendar.title') }}
-      </h2>
-      <div class="flex items-center gap-2">
-        <button
-          type="button"
-          @click="goToToday"
-          class="px-3 py-1.5 rounded-md text-sm font-medium text-brand-primary bg-[#f0f4ff] hover:bg-blue-100 transition-colors"
-        >
-          {{ t('calendar.today') }}
-        </button>
-        <button
-          type="button"
-          @click="prevMonth"
-          class="w-9 h-9 rounded-md hover:bg-gray-100 flex items-center justify-center text-brand-dark transition-colors"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M15 19l-7-7 7-7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </svg>
-        </button>
-        <div
-          class="font-semibold text-brand-dark capitalize min-w-[140px] text-center"
-        >
-          {{ monthLabel }}
-        </div>
-        <button
-          type="button"
-          @click="nextMonth"
-          class="w-9 h-9 rounded-md hover:bg-gray-100 flex items-center justify-center text-brand-dark transition-colors"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M9 5l7 7-7 7"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Upcoming banner -->
+    <!-- Upcoming birthday — formal banner at top -->
     <button
       v-if="upcoming"
       type="button"
       @click="openPerson(upcoming.person)"
-      class="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-brand-dark to-brand-primary text-white text-left hover:shadow-md transition-shadow"
+      class="group relative w-full bg-[#f5f8ff] border border-blue-100 rounded-lg overflow-hidden text-left hover:shadow-md transition-shadow"
     >
-      <img
-        :src="PHOTO"
-        :alt="upcoming.person.fullName"
-        class="w-16 h-16 rounded-full object-cover border-2 border-white/50 shrink-0"
-      />
-      <div class="flex-grow min-w-0">
+      <span
+        class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand-primary"
+      ></span>
+      <div
+        class="pl-6 pr-5 py-4 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-4 md:gap-6"
+      >
+        <div class="border-2 border-brand-primary p-0.5 bg-white shrink-0">
+          <img
+            :src="PHOTO"
+            :alt="upcoming.person.fullName"
+            class="w-[68px] h-[84px] object-cover"
+          />
+        </div>
+
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 mb-1.5">
+            <svg
+              class="w-4 h-4 text-brand-primary shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M5 13c0-1.1.9-2 2-2h10a2 2 0 012 2v6H5v-6z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+              <path
+                d="M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0M9 11V8m3 3V8m3 3V8M12 5l-1.5-2m1.5 2l1.5-2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+            <span
+              class="text-[11px] uppercase tracking-[0.25em] font-bold text-brand-primary"
+            >
+              {{ t('calendar.upcoming') }}
+            </span>
+          </div>
+          <div
+            class="text-xl md:text-2xl font-bold text-brand-dark leading-tight"
+          >
+            {{ upcoming.person.fullName }}
+          </div>
+          <div class="text-sm text-brand-muted mt-0.5 truncate">
+            {{ upcoming.person.work.position }}
+          </div>
+          <div
+            class="flex items-center gap-1.5 mt-2 text-sm font-semibold text-brand-dark"
+          >
+            <svg
+              class="w-4 h-4 text-brand-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+            {{ upcomingDateLabel }}
+          </div>
+        </div>
+
         <div
-          class="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/70 mb-0.5"
+          class="md:border-l md:border-blue-200 md:pl-6 text-center shrink-0"
         >
-          {{ t('calendar.upcoming') }}
-        </div>
-        <div class="text-lg md:text-xl font-bold truncate">
-          {{ upcoming.person.fullName }}
-        </div>
-        <div class="text-sm text-white/85">
-          {{ upcomingDateLabel }}
-        </div>
-      </div>
-      <div class="shrink-0 text-right pr-1">
-        <div class="text-3xl md:text-4xl font-bold leading-none">
-          {{ upcoming.daysLeft }}
-        </div>
-        <div class="text-[11px] uppercase tracking-wider text-white/80 mt-1">
-          {{ upcomingDaysText }}
+          <div
+            class="text-5xl font-bold text-brand-primary leading-none tabular-nums"
+          >
+            {{ upcoming.daysLeft }}
+          </div>
+          <div
+            class="text-[10px] uppercase tracking-[0.25em] font-semibold text-brand-muted mt-2"
+          >
+            {{ upcomingDaysText }}
+          </div>
         </div>
       </div>
     </button>
+
+    <div class="flex items-center justify-between gap-4 flex-wrap">
+      <h2 class="text-xl font-bold text-brand-dark">
+        {{ t('calendar.title') }}
+      </h2>
+      <button
+        type="button"
+        @click="goToToday"
+        class="px-3 py-1.5 rounded-md text-sm font-medium text-brand-primary bg-[#f0f4ff] hover:bg-blue-100 transition-colors"
+      >
+        {{ t('calendar.today') }}
+      </button>
+    </div>
+
+    <!-- Prominent month banner with nav -->
+    <div
+      class="flex items-center justify-center gap-3 md:gap-6 bg-[#f0f4ff] border border-blue-100 rounded-lg py-3 px-4"
+    >
+      <button
+        type="button"
+        @click="prevMonth"
+        class="w-10 h-10 rounded-full bg-white hover:bg-brand-primary hover:text-white flex items-center justify-center text-brand-dark shadow-sm transition-colors shrink-0"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M15 19l-7-7 7-7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+      <div
+        class="text-2xl md:text-3xl font-bold text-brand-dark uppercase tracking-wide text-center min-w-[200px]"
+      >
+        {{ monthLabel }}
+      </div>
+      <button
+        type="button"
+        @click="nextMonth"
+        class="w-10 h-10 rounded-full bg-white hover:bg-brand-primary hover:text-white flex items-center justify-center text-brand-dark shadow-sm transition-colors shrink-0"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M9 5l7 7-7 7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+    </div>
 
     <!-- Calendar grid -->
     <div class="border border-gray-200 rounded-lg overflow-hidden">
