@@ -1,0 +1,120 @@
+{
+  "header": {
+    "ministry": "O'zbekiston Respublikasi Madaniyat vazirligi"
+  },
+  "lang": {
+    "label": "Til",
+    "uz_latn": "O'z(lotin)",
+    "uz_cyrl": "Ўз(крил)",
+    "ru": "Ру"
+  },
+  "directions": {
+    "all": "BARCHA SOHA VAKILLARI",
+    "theater_circus": "TEATR VA SIRK YO'NALISHI SOHA VAKILLARI",
+    "education": "TA'LIM YO'NALISHI SOHA VAKILLARI",
+    "heritage": "NOMODDIY MADANIY MEROS YO'NALISHI BO'YICHA SOHA VAKILLARI",
+    "cinema": "KINO SOHASI VAKILLARI",
+    "concert": "KONSERT-TOMOSHA YO'NALISHI SOHA VAKILLARI"
+  },
+  "map": {
+    "title": "O'zbekiston Respublikasi",
+    "back": "Umumiy xaritaga qaytish",
+    "hint": "Tumanlarni ko'rish uchun viloyatni tanlang"
+  },
+  "regions": {
+    "title": "Hududlar",
+    "totalLabel": "Jami vakillar",
+    "men": "Erkaklar",
+    "women": "Ayollar",
+    "names": {
+      "andijon": "Andijon viloyati",
+      "buxoro": "Buxoro viloyati",
+      "fargona": "Farg'ona viloyati",
+      "jizzax": "Jizzax viloyati",
+      "namangan": "Namangan viloyati",
+      "navoiy": "Navoiy viloyati",
+      "qashqadaryo": "Qashqadaryo viloyati",
+      "qoraqalpogiston": "Qoraqalpog'iston Respublikasi",
+      "samarqand": "Samarqand viloyati",
+      "sirdaryo": "Sirdaryo viloyati",
+      "surxondaryo": "Surxondaryo viloyati",
+      "toshkent-viloyati": "Toshkent viloyati",
+      "toshkent-shahri": "Toshkent shahri",
+      "xorazm": "Xorazm viloyati"
+    }
+  },
+  "people": {
+    "searchPlaceholder": "Ism yoki lavozim bo'yicha qidirish",
+    "totalLabel": "Jami vakillar",
+    "men": "Erkaklar",
+    "women": "Ayollar",
+    "empty": "Hech narsa topilmadi",
+    "all": "Barcha hududlar"
+  },
+  "portfolio": {
+    "title": "PORTFOLIO",
+    "personal": "SHAXSIY MA'LUMOTLAR",
+    "lastName": "Familiyasi",
+    "firstName": "Ismi",
+    "middleName": "Otasining ismi",
+    "nationality": "Millati",
+    "birthDate": "Tug'ilgan sanasi",
+    "birthPlace": "Tug'ilgan joyi",
+    "familyInfo": "Oilasi haqida ma'lumotlar",
+    "maritalStatus": "Oilaviy va ijtimoiy ahvoli",
+    "familyMembers": "Oila a'zolari",
+    "father": "Otasi",
+    "mother": "Onasi",
+    "spouse": "Turmush o'rtog'i",
+    "education": "Ma'lumoti",
+    "university": "Tamomlagan OTM",
+    "specialty": "Mutaxassisligi",
+    "academicDegree": "Ilmiy daraja (unvon)",
+    "languages": "Chet tillarni bilishi",
+    "training": "Malaka oshirganligi (so'nggi 2 yilda)",
+    "work": "MEHNAT FAOLIYATI",
+    "position": "Egallab turgan lavozimi",
+    "careerLevel": "Martaba darajasi",
+    "totalExperience": "Umumiy mehnat staji",
+    "leadershipExperience": "Rahbarlik staji",
+    "leadershipPositions": "Faoliyat yuritgan rahbarlik lavozimlari",
+    "health": "Sog'lig'i",
+    "lastMedicalTreatment": "Qachon tibbiy muolaja olgan",
+    "medicalCheckup": "Tibbiy ko'rikdan o'tganligi (so'nggi 2 yilda)",
+    "healthProblems": "Sog'ligidagi muammolar",
+    "achievements": "Mehnat faoliyatidagi yutuqlar",
+    "activity": "FAOLIYATI",
+    "description": "Mehnat faoliyati haqida qisqacha tavsifnoma",
+    "stateEvents": "Davlat tadbirlaridagi ishtiroki",
+    "region": "Hududi"
+  },
+  "calendar": {
+    "title": "Tug'ilgan kunlar kalendari",
+    "upcoming": "Eng yaqin tug'ilgan kun",
+    "daysLeft": "{n} kun qoldi",
+    "today": "Bugun",
+    "empty": "Bu oyda tug'ilgan kunlar yo'q",
+    "months": [
+      "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+      "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
+    ],
+    "weekdays": ["Du", "Se", "Ch", "Pa", "Ju", "Sh", "Ya"]
+  },
+  "categories": {
+    "parties": "Siyosiy partiyalar uchun",
+    "candidates": "Nomzodlar uchun",
+    "local_observers": "Mahalliy kuzatuvchilar uchun",
+    "foreign_observers": "Xorijiy kuzatuvchilar uchun",
+    "local_media": "Mahalliy OAV uchun",
+    "foreign_media": "Xorijiy OAV uchun",
+    "voters": "Saylovchilar uchun"
+  },
+  "footer": {
+    "copyright": "© 2026 O'zbekiston Respublikasi Madaniyat vazirligi. Barcha huquqlar himoyalangan.",
+    "about": "Tizim haqida",
+    "faqs": "Ko'p so'raladigan savollar"
+  },
+  "common": {
+    "loading": "Yuklanmoqda..."
+  }
+}

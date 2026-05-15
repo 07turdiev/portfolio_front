@@ -1,0 +1,39 @@
+{
+  "directions": [
+    {
+      "key": "theater_circus",
+      "icon": "theater",
+      "count": 117,
+      "men": 70,
+      "women": 47
+    },
+    {
+      "key": "education",
+      "icon": "education",
+      "count": 123,
+      "men": 71,
+      "women": 52
+    },
+    {
+      "key": "heritage",
+      "icon": "heritage",
+      "count": 134,
+      "men": 71,
+      "women": 63
+    },
+    {
+      "key": "cinema",
+      "icon": "cinema",
+      "count": 132,
+      "men": 87,
+      "women": 45
+    },
+    {
+      "key": "concert",
+      "icon": "concert",
+      "count": 135,
+      "men": 79,
+      "women": 56
+    }
+  ]
+}
