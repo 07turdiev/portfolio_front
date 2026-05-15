@@ -23,30 +23,7 @@ const PHOTO = '/img/person-placeholder.jpg'
     class="lg:col-span-6 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col p-6 overflow-hidden min-h-0"
   >
     <!-- Combined filter + search row -->
-    <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 mb-3 shrink-0">
-      <!-- Search -->
-      <div class="relative">
-        <svg
-          class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-          />
-        </svg>
-        <input
-          v-model="searchQuery"
-          type="text"
-          :placeholder="t('people.searchPlaceholder')"
-          class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-brand-text placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary"
-        />
-      </div>
-
+    <div class="grid grid-cols-[auto_auto_1fr_auto] gap-2 mb-3 shrink-0">
       <!-- Gender -->
       <div class="relative">
         <select
@@ -97,6 +74,29 @@ const PHOTO = '/img/person-placeholder.jpg'
             stroke-width="2"
           />
         </svg>
+      </div>
+
+      <!-- Search -->
+      <div class="relative">
+        <svg
+          class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+        <input
+          v-model="searchQuery"
+          type="text"
+          :placeholder="t('people.searchPlaceholder')"
+          class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-brand-text placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary"
+        />
       </div>
 
       <!-- Reset -->
