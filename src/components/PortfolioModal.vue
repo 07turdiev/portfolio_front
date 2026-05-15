@@ -26,20 +26,26 @@ function placeLabel(districtName, regionKey) {
 const personalRows = computed(() => {
   if (!person.value) return []
   const p = person.value.personal
-  const person_ = person.value
   return [
     { l: t('portfolio.lastName'), v: p.lastName },
     { l: t('portfolio.firstName'), v: p.firstName },
     { l: t('portfolio.middleName'), v: p.middleName },
     { l: t('portfolio.nationality'), v: p.nationality },
-    { l: t('portfolio.birthDate'), v: p.birthDate },
+    { l: t('portfolio.birthDate'), v: p.birthDate }
+  ]
+})
+
+const placeRows = computed(() => {
+  if (!person.value) return []
+  const p = person.value
+  return [
     {
       l: t('portfolio.birthPlace'),
-      v: placeLabel(person_.birthDistrictName, person_.birthRegionKey)
+      v: placeLabel(p.birthDistrictName, p.birthRegionKey)
     },
     {
       l: t('portfolio.residence'),
-      v: placeLabel(person_.districtName, person_.regionKey)
+      v: placeLabel(p.districtName, p.regionKey)
     }
   ]
 })
@@ -232,17 +238,33 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       {{ t('portfolio.personal') }}
                     </h3>
                   </header>
-                  <div class="p-4 flex gap-4">
-                    <img
-                      src="/img/person-placeholder.jpg"
-                      :alt="person.fullName"
-                      class="w-24 h-32 object-cover border border-gray-200 rounded shrink-0"
-                    />
-                    <dl class="flex-grow min-w-0">
+                  <div class="p-4">
+                    <div class="flex gap-4">
+                      <img
+                        src="/img/person-placeholder.jpg"
+                        :alt="person.fullName"
+                        class="w-24 h-32 object-cover border border-gray-200 rounded shrink-0"
+                      />
+                      <dl class="flex-grow min-w-0">
+                        <div
+                          v-for="row in personalRows"
+                          :key="row.l"
+                          class="flex gap-2 py-1 border-b border-gray-100 last:border-0 text-[13px]"
+                        >
+                          <dt class="w-2/5 text-brand-muted shrink-0">
+                            {{ row.l }}
+                          </dt>
+                          <dd class="w-3/5 font-medium text-brand-dark">
+                            {{ row.v }}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+                    <dl class="mt-1">
                       <div
-                        v-for="row in personalRows"
+                        v-for="row in placeRows"
                         :key="row.l"
-                        class="flex gap-2 py-1 border-b border-gray-100 last:border-0 text-[13px]"
+                        class="flex gap-2 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
                       >
                         <dt class="w-2/5 text-brand-muted shrink-0">
                           {{ row.l }}
