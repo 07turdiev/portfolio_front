@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePortfolioData } from '../composables/usePortfolioData'
 import { fetchAwardTaxonomy } from '../services/api'
@@ -12,6 +12,9 @@ const {
   searchQuery,
   genderFilter,
   sortBy,
+  awardCategory,
+  awardType,
+  awardName,
   peopleLoading,
   resetFilters,
   openPerson
@@ -19,11 +22,7 @@ const {
 
 const PHOTO = '/img/person-placeholder.jpg'
 
-// Advanced filter state — options will be wired when API data is available
 const advancedOpen = ref(false)
-const awardCategory = ref('')
-const awardType = ref('')
-const awardName = ref('')
 
 // Award taxonomy (loaded from JSON, as if from API)
 const awardTaxonomy = ref({ affiliations: [] })
@@ -55,21 +54,6 @@ const nameOptions = computed(() => {
   return type?.names ?? []
 })
 
-// Cascading reset: when category changes, type/name reset; type → name resets
-watch(awardCategory, () => {
-  awardType.value = ''
-  awardName.value = ''
-})
-watch(awardType, () => {
-  awardName.value = ''
-})
-
-function resetAllFilters() {
-  resetFilters()
-  awardCategory.value = ''
-  awardType.value = ''
-  awardName.value = ''
-}
 </script>
 
 <template>
@@ -185,7 +169,7 @@ function resetAllFilters() {
       <!-- Reset -->
       <button
         type="button"
-        @click="resetAllFilters"
+        @click="resetFilters"
         :title="t('filter.reset')"
         class="bg-white border border-gray-200 text-brand-dark hover:text-brand-primary hover:border-brand-primary px-3 py-2.5 rounded-lg flex items-center justify-center transition-colors"
       >

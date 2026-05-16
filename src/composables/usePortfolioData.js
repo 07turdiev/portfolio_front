@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch, effectScope } from 'vue'
 import { fetchDirections, fetchPeople, fetchDistrictMap } from '../services/api'
 
 export const ALL_KEY = 'all'
@@ -13,6 +13,30 @@ const selectedDistrictId = ref(null)
 const searchQuery = ref('')
 const genderFilter = ref('all') // 'all' | 'male' | 'female'
 const sortBy = ref('name-asc') // 'name-asc' | 'name-desc' | 'birth-asc' | 'birth-desc' | 'region'
+const awardCategory = ref('')
+const awardType = ref('')
+const awardName = ref('')
+
+// Cascading reset: setting parent clears children. Sync flush so chained
+// URL-driven sets (category, then type, then name) end up in the right state.
+const cascadeScope = effectScope(true)
+cascadeScope.run(() => {
+  watch(
+    awardCategory,
+    () => {
+      awardType.value = ''
+      awardName.value = ''
+    },
+    { flush: 'sync' }
+  )
+  watch(
+    awardType,
+    () => {
+      awardName.value = ''
+    },
+    { flush: 'sync' }
+  )
+})
 
 const peopleByDirection = ref({})
 const districtMaps = ref({})
@@ -208,6 +232,7 @@ export function usePortfolioData() {
     sortBy.value = 'name-asc'
     selectedRegionKey.value = null
     selectedDistrictId.value = null
+    awardCategory.value = '' // cascades type='' and name='' via sync watchers
   }
 
   function backToCountry() {
@@ -249,6 +274,9 @@ export function usePortfolioData() {
     searchQuery,
     genderFilter,
     sortBy,
+    awardCategory,
+    awardType,
+    awardName,
     peopleLoading,
     selectedPerson,
     selectedPersonIndex,
