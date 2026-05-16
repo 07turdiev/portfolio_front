@@ -197,8 +197,11 @@ export function usePortfolioData() {
       const data = await fetchDirections()
       directionsRaw.value = data.directions ?? []
       if (directionsRaw.value.length) {
-        selectedDirectionKey.value = ALL_KEY
-        await loadPeople(ALL_KEY)
+        // selectedDirectionKey may have been set by useUrlSync from the URL.
+        // Default to ALL_KEY only if no direction was chosen.
+        const initial = selectedDirectionKey.value || ALL_KEY
+        selectedDirectionKey.value = initial
+        await loadPeople(initial)
       }
       loaded = true
     } catch (e) {
