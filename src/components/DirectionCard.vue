@@ -1,9 +1,8 @@
 <script setup>
-import { computed } from 'vue'
-import { formatNumber } from '../utils/format'
 import DirectionIcon from './DirectionIcon.vue'
+import AnimatedNumber from './AnimatedNumber.vue'
 
-const props = defineProps({
+defineProps({
   label: { type: String, required: true },
   count: { type: Number, required: true },
   icon: { type: String, default: 'theater' },
@@ -11,8 +10,6 @@ const props = defineProps({
 })
 
 defineEmits(['select'])
-
-const formatted = computed(() => formatNumber(props.count))
 </script>
 
 <template>
@@ -46,11 +43,11 @@ const formatted = computed(() => formatNumber(props.count))
       </div>
       <div
         :class="[
-          'text-2xl font-bold tracking-tight',
+          'text-2xl font-bold tracking-tight tabular-nums',
           selected ? 'text-white' : 'text-[#2a4387]'
         ]"
       >
-        {{ formatted }}
+        <AnimatedNumber :value="count" />
       </div>
     </div>
   </button>

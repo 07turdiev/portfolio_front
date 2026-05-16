@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePortfolioData } from '../composables/usePortfolioData'
 import { fetchAwardTaxonomy } from '../services/api'
-import { formatNumber } from '../utils/format'
+import AnimatedNumber from './AnimatedNumber.vue'
 
 const { t } = useI18n()
 const {
@@ -260,7 +260,7 @@ function resetAllFilters() {
               :key="opt.key"
               :value="opt.key"
             >
-              {{ t(`filter.types.${opt.key}`, opt.key) }}
+              {{ t(`awards.${opt.key}`) }}
             </option>
           </select>
           <svg
@@ -290,7 +290,7 @@ function resetAllFilters() {
               :key="opt.key"
               :value="opt.key"
             >
-              {{ t(`filter.names.${opt.key}`, opt.key) }}
+              {{ t(`filter.names.${opt.key}`) }}
             </option>
           </select>
           <svg
@@ -324,7 +324,7 @@ function resetAllFilters() {
           <div
             class="text-xl font-bold text-brand-dark mt-1 tabular-nums"
           >
-            {{ formatNumber(peopleSummary.total) }}
+            <AnimatedNumber :value="peopleSummary.total" />
           </div>
         </div>
         <div class="px-3 py-2.5 text-center">
@@ -336,7 +336,7 @@ function resetAllFilters() {
           <div
             class="text-xl font-bold text-brand-dark mt-1 tabular-nums"
           >
-            {{ formatNumber(peopleSummary.men) }}
+            <AnimatedNumber :value="peopleSummary.men" />
           </div>
         </div>
         <div class="px-3 py-2.5 text-center">
@@ -348,7 +348,7 @@ function resetAllFilters() {
           <div
             class="text-xl font-bold text-brand-dark mt-1 tabular-nums"
           >
-            {{ formatNumber(peopleSummary.women) }}
+            <AnimatedNumber :value="peopleSummary.women" />
           </div>
         </div>
       </div>
