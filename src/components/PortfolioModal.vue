@@ -198,7 +198,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   {{ t('portfolio.title') }}
                 </div>
                 <h2 class="text-xl md:text-2xl font-bold leading-tight mt-0.5">
-                  {{ person.fullName }}
+                  {{ person.fullName }}<template v-if="isDeceased">
+                    <span class="font-normal text-white/80"> — {{ person.work.health }}</span>
+                  </template>
                 </h2>
                 <div
                   class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-[13px] text-white/90"
