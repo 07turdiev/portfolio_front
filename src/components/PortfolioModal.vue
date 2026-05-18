@@ -17,6 +17,14 @@ const {
 
 const PHOTO = '/img/person-placeholder.jpg'
 const person = computed(() => selectedPerson.value)
+const isDeceased = computed(() => person.value?.work?.healthKey === 'deceased')
+
+const HEALTH_BADGE_CLASS = {
+  good: 'bg-green-100 text-green-800 border-green-200',
+  average: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  poor: 'bg-red-100 text-red-800 border-red-200',
+  deceased: 'bg-gray-200 text-gray-700 border-gray-300'
+}
 
 function placeLabel(districtName, regionKey) {
   if (!regionKey) return ''
@@ -72,7 +80,7 @@ const workRows = computed(() => {
     { l: t('portfolio.totalExperience'), v: w.totalExperience },
     { l: t('portfolio.leadershipExperience'), v: w.leadershipExperience },
     { l: t('portfolio.leadershipPositions'), v: w.leadershipPositions },
-    { l: t('portfolio.health'), v: w.health },
+    // Sog'lig'i alohida badge sifatida ko'rsatiladi
     { l: t('portfolio.lastMedicalTreatment'), v: w.lastMedicalTreatment },
     { l: t('portfolio.medicalCheckup'), v: w.medicalCheckup },
     { l: t('portfolio.healthProblems'), v: w.healthProblems }
@@ -173,7 +181,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         >
           <article
             :key="person.id"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden"
+            :class="[
+              'bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300',
+              isDeceased && 'grayscale'
+            ]"
           >
             <!-- Compact hero -->
             <div
@@ -367,18 +378,30 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
 
                 <section
-                  v-if="workRows.length"
+                  v-if="workRows.length || person.work.health"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
-                    <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46]"
+                  <header class="flex items-center justify-between gap-2 px-4 py-2.5 bg-[#eef3e9]">
+                    <div class="flex items-center gap-2">
+                      <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
+                      <h3
+                        class="text-xs font-bold uppercase tracking-wider text-[#536b46]"
+                      >
+                        {{ t('portfolio.work') }}
+                      </h3>
+                    </div>
+                    <!-- Sog'lig'i — ajralib turuvchi badge -->
+                    <span
+                      v-if="person.work.health"
+                      class="text-[11px] font-bold px-3 py-1 rounded-full border whitespace-nowrap"
+                      :class="HEALTH_BADGE_CLASS[person.work.healthKey] || 'bg-gray-100 text-gray-700 border-gray-200'"
+                      :title="t('portfolio.health')"
                     >
-                      {{ t('portfolio.work') }}
-                    </h3>
+                      <span aria-hidden="true">●</span>
+                      {{ person.work.health }}
+                    </span>
                   </header>
-                  <dl class="px-4 py-2">
+                  <dl v-if="workRows.length" class="px-4 py-2">
                     <div
                       v-for="row in workRows"
                       :key="row.l"
