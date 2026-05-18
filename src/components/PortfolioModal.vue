@@ -52,13 +52,10 @@ const placeRows = computed(() => {
   if (!person.value) return []
   const p = person.value
   return [
-    {
-      l: t('portfolio.birthPlace'),
-      v: placeLabel(p.birthDistrictName, p.birthRegionKey)
-    },
+    { l: t('portfolio.birthPlace'), v: p.personal.birthPlace },
     {
       l: t('portfolio.residence'),
-      v: placeLabel(p.districtName, p.regionKey)
+      v: p.personal.residencePlace || placeLabel(p.districtName, p.regionKey)
     }
   ].filter((r) => r.v && String(r.v).trim())
 })
