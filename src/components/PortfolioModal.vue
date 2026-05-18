@@ -20,10 +20,10 @@ const person = computed(() => selectedPerson.value)
 const isDeceased = computed(() => person.value?.work?.healthKey === 'deceased')
 
 const HEALTH_BADGE_CLASS = {
-  good: 'bg-green-100 text-green-800 border-green-200',
-  average: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  poor: 'bg-red-100 text-red-800 border-red-200',
-  deceased: 'bg-gray-200 text-gray-700 border-gray-300'
+  good: 'bg-green-100 text-green-800 border-green-300',
+  average: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+  poor: 'bg-red-100 text-red-800 border-red-300',
+  deceased: 'bg-gray-300 text-gray-800 border-gray-400'
 }
 
 function placeLabel(districtName, regionKey) {
@@ -80,7 +80,7 @@ const workRows = computed(() => {
     { l: t('portfolio.totalExperience'), v: w.totalExperience },
     { l: t('portfolio.leadershipExperience'), v: w.leadershipExperience },
     { l: t('portfolio.leadershipPositions'), v: w.leadershipPositions },
-    // Sog'lig'i alohida badge sifatida ko'rsatiladi
+    { l: t('portfolio.health'), v: w.health, isHealth: true, healthKey: w.healthKey },
     { l: t('portfolio.lastMedicalTreatment'), v: w.lastMedicalTreatment },
     { l: t('portfolio.medicalCheckup'), v: w.medicalCheckup },
     { l: t('portfolio.healthProblems'), v: w.healthProblems }
@@ -183,7 +183,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
             :key="person.id"
             :class="[
               'bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300',
-              isDeceased && 'grayscale'
+              isDeceased && 'deceased-modal'
             ]"
           >
             <!-- Compact hero -->
@@ -378,38 +378,46 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
 
                 <section
-                  v-if="workRows.length || person.work.health"
+                  v-if="workRows.length"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center justify-between gap-2 px-4 py-2.5 bg-[#eef3e9]">
-                    <div class="flex items-center gap-2">
-                      <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                      <h3
-                        class="text-xs font-bold uppercase tracking-wider text-[#536b46]"
-                      >
-                        {{ t('portfolio.work') }}
-                      </h3>
-                    </div>
-                    <!-- Sog'lig'i — ajralib turuvchi badge -->
-                    <span
-                      v-if="person.work.health"
-                      class="text-[11px] font-bold px-3 py-1 rounded-full border whitespace-nowrap"
-                      :class="HEALTH_BADGE_CLASS[person.work.healthKey] || 'bg-gray-100 text-gray-700 border-gray-200'"
-                      :title="t('portfolio.health')"
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
+                    <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
+                    <h3
+                      class="text-xs font-bold uppercase tracking-wider text-[#536b46]"
                     >
-                      <span aria-hidden="true">●</span>
-                      {{ person.work.health }}
-                    </span>
+                      {{ t('portfolio.work') }}
+                    </h3>
                   </header>
-                  <dl v-if="workRows.length" class="px-4 py-2">
-                    <div
-                      v-for="row in workRows"
-                      :key="row.l"
-                      class="flex gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
-                    >
-                      <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
-                      <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
-                    </div>
+                  <dl class="px-4 py-2">
+                    <template v-for="row in workRows" :key="row.l">
+                      <!-- Sog'lig'i — o'z joyida ajralib turadi (badge bilan) -->
+                      <div
+                        v-if="row.isHealth"
+                        class="flex gap-3 py-2 border-b border-gray-100 last:border-0 text-[13px] items-center"
+                      >
+                        <dt class="w-2/5 text-brand-muted shrink-0 font-semibold">
+                          {{ row.l }}
+                        </dt>
+                        <dd class="w-3/5">
+                          <span
+                            class="inline-flex items-center gap-1.5 font-bold text-xs px-3 py-1 rounded-full border"
+                            :class="HEALTH_BADGE_CLASS[row.healthKey] || 'bg-gray-100 text-gray-700 border-gray-200'"
+                          >
+                            <span aria-hidden="true">●</span>
+                            {{ row.v }}
+                          </span>
+                        </dd>
+                      </div>
+                      <!-- Oddiy qator -->
+                      <div
+                        v-else
+                        class="flex gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
+                      >
+                        <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
+                        <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
+                      </div>
+                    </template>
                   </dl>
                 </section>
               </div>
@@ -486,3 +494,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
     </Transition>
   </Teleport>
 </template>
+
+<style scoped>
+/* Vafot etgan vakil — butun karta to'liq kul rang (rasm, gradient, badge — hammasi) */
+.deceased-modal {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+}
+</style>

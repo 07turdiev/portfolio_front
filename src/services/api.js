@@ -91,7 +91,6 @@ function reshapePerson(p) {
       leadershipExperience: pickLang(p.work?.leadershipExperience),
       leadershipPositions: pickLang(p.work?.leadershipPositions),
       health: p.work?.healthDisplay || '',
-      healthKey: p.work?.health || '',
       lastMedicalTreatment: pickLang(p.work?.lastMedicalTreatment),
       medicalCheckup: pickLang(p.work?.medicalCheckup),
       healthProblems: pickLang(p.work?.healthProblems)
