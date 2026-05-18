@@ -375,8 +375,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               </div>
 
               <!-- Column 3 -->
-              <div class="flex flex-col gap-4">
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+              <div class="flex flex-col gap-4 h-full min-h-0">
+                <section class="rounded-lg border border-gray-200 overflow-hidden shrink-0">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3
@@ -403,8 +403,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </ul>
                 </section>
 
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4]">
+                <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-grow min-h-[260px]">
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4] shrink-0">
                     <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
                     <h3
                       class="text-xs font-bold uppercase tracking-wider text-[#a8602f]"
@@ -412,14 +412,15 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       {{ t('portfolio.activity') }}
                     </h3>
                   </header>
-                  <div class="px-4 py-3 flex flex-col gap-3">
-                    <div>
+                  <div class="px-4 py-3 flex flex-col gap-3 flex-grow min-h-0">
+                    <!-- Tavsifnoma — qolgan joyni egallaydi -->
+                    <div class="flex flex-col flex-grow min-h-0">
                       <div
-                        class="text-xs font-semibold text-brand-dark uppercase tracking-wide mb-1.5"
+                        class="text-xs font-semibold text-brand-dark uppercase tracking-wide mb-1.5 shrink-0"
                       >
                         {{ t('portfolio.description') }}
                       </div>
-                      <div class="max-h-[180px] overflow-y-auto custom-scrollbar pr-1">
+                      <div class="flex-grow overflow-y-auto custom-scrollbar pr-1 min-h-0">
                         <p
                           class="text-[13px] text-brand-text leading-relaxed text-justify"
                         >
@@ -427,7 +428,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                         </p>
                       </div>
                     </div>
-                    <div class="border-t border-gray-100 pt-3">
+                    <!-- Davlat tadbirlari — pastda, o'z hajmida -->
+                    <div class="border-t border-gray-100 pt-3 shrink-0">
                       <div
                         class="text-xs font-semibold text-brand-dark uppercase tracking-wide mb-1.5"
                       >
