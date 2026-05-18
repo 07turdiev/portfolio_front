@@ -391,8 +391,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
               </div>
 
-              <!-- Column 3 — 3 ta alohida bo'lim, Tavsifnoma cho'ziladi -->
-              <div class="flex flex-col gap-4 h-full min-h-0">
+              <!-- Column 3 — 3 ta alohida bo'lim, Tavsifnoma chegarali cho'ziladi -->
+              <div class="flex flex-col gap-4">
                 <!-- 1. Yutuqlar -->
                 <section
                   v-if="person.achievements && person.achievements.length"
@@ -420,10 +420,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </ul>
                 </section>
 
-                <!-- 2. Tavsifnoma — qolgan joyni egallaydi -->
+                <!-- 2. Tavsifnoma — qolgan joyni egallaydi, lekin chegarali -->
                 <section
                   v-if="person.activity.description && person.activity.description.trim()"
-                  class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-grow min-h-[180px]"
+                  class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-grow min-h-[180px] max-h-[400px]"
                 >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4] shrink-0">
                     <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
