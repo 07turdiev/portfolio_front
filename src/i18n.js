@@ -27,3 +27,12 @@ export function setLocale(locale) {
   localStorage.setItem('locale', locale)
   document.documentElement.lang = locale.startsWith('uz') ? 'uz' : locale
 }
+
+/** Backenddan keladigan {uz_latn, uz_cyrl, ru} dict'idan joriy lokal qiymatni qaytaradi. */
+export function pickLang(dict) {
+  if (dict == null) return ''
+  if (typeof dict === 'string') return dict
+  const locale = i18n.global.locale.value
+  const key = locale.replace('-', '_')
+  return dict[key] || dict.uz_latn || dict.uz_cyrl || dict.ru || ''
+}

@@ -1,5 +1,6 @@
 import { ref, computed, watch, effectScope } from 'vue'
 import { fetchDirections, fetchPeople, fetchDistrictMap } from '../services/api'
+import { i18n } from '../i18n'
 
 export const ALL_KEY = 'all'
 
@@ -45,6 +46,36 @@ const peopleLoading = ref(false)
 const selectedPerson = ref(null)
 
 let loaded = false
+
+// Locale o'zgarganda barcha API ma'lumotlarini qaytadan yuklash (yangi tilda)
+const localeScope = effectScope(true)
+localeScope.run(() => {
+  watch(
+    () => i18n.global.locale.value,
+    async () => {
+      if (!loaded) return
+      const loadedDirections = Object.keys(peopleByDirection.value)
+      peopleByDirection.value = {}
+      try {
+        const data = await fetchDirections()
+        directionsRaw.value = data.directions ?? []
+        await Promise.all(loadedDirections.map((k) => loadOnePublic(k)))
+      } catch (e) {
+        error.value = e
+      }
+    }
+  )
+})
+
+async function loadOnePublic(key) {
+  if (key === ALL_KEY) {
+    await Promise.all(directionsRaw.value.map(async (d) => {
+      peopleByDirection.value[d.key] = await fetchPeople(d.key)
+    }))
+  } else {
+    peopleByDirection.value[key] = await fetchPeople(key)
+  }
+}
 
 // "Barchasi" pseudo-direction prepended to the real five.
 const directions = computed(() => {
