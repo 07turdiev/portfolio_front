@@ -173,11 +173,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         >
           <article
             :key="person.id"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-y-auto custom-scrollbar"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl h-[94vh] overflow-hidden flex flex-col"
           >
             <!-- Compact hero -->
             <div
-              class="bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4"
+              class="bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4 shrink-0"
             >
               <div class="min-w-0">
                 <div
@@ -227,9 +227,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
             </div>
 
             <!-- 3 columns filling the landscape width -->
-            <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 flex-grow overflow-hidden min-h-0">
               <!-- Column 1 -->
-              <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
@@ -330,7 +330,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               </div>
 
               <!-- Column 2 -->
-              <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
@@ -375,7 +375,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               </div>
 
               <!-- Column 3 — 3 ta bo'lim content asosida bir-birining joyini egallaydi -->
-              <div class="flex flex-col gap-4 h-full min-h-[600px]">
+              <div class="flex flex-col gap-4 h-full min-h-0">
                 <!-- 1. Yutuqlar -->
                 <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-auto min-h-[120px]">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9] shrink-0">
