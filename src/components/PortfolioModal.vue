@@ -173,11 +173,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         >
           <article
             :key="person.id"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-y-auto custom-scrollbar"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden flex flex-col"
           >
             <!-- Compact hero -->
             <div
-              class="bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4"
+              class="bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4 shrink-0"
             >
               <div class="min-w-0">
                 <div
@@ -227,9 +227,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
             </div>
 
             <!-- 3 columns filling the landscape width -->
-            <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 flex-grow overflow-hidden min-h-0">
               <!-- Column 1 -->
-              <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
@@ -330,7 +330,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               </div>
 
               <!-- Column 2 -->
-              <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
@@ -374,26 +374,23 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
               </div>
 
-              <!-- Column 3 -->
-              <div class="flex flex-col gap-4">
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
+              <!-- Column 3 — 3 ta bo'lim content asosida bir-birining joyini egallaydi -->
+              <div class="flex flex-col gap-4 h-full min-h-0">
+                <!-- 1. Yutuqlar -->
+                <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-auto min-h-[100px]">
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9] shrink-0">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46]"
-                    >
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
                       {{ t('portfolio.achievements') }}
                     </h3>
                   </header>
-                  <ul class="px-4 py-2 flex flex-col max-h-[280px] overflow-y-auto custom-scrollbar">
+                  <ul class="px-4 py-2 flex flex-col flex-grow overflow-y-auto custom-scrollbar min-h-0">
                     <li
                       v-for="(ach, idx) in person.achievements"
                       :key="idx"
                       class="flex gap-3 py-2 border-b border-gray-100 last:border-0"
                     >
-                      <span
-                        class="shrink-0 bg-[#eef3e9] text-[#536b46] text-xs font-bold px-2 py-1 rounded h-fit"
-                      >
+                      <span class="shrink-0 bg-[#eef3e9] text-[#536b46] text-xs font-bold px-2 py-1 rounded h-fit">
                         {{ ach.year }}
                       </span>
                       <span class="text-[13px] text-brand-dark leading-snug">
@@ -403,44 +400,33 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </ul>
                 </section>
 
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4]">
+                <!-- 2. Tavsifnoma -->
+                <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-auto min-h-[100px]">
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4] shrink-0">
                     <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#a8602f]"
-                    >
-                      {{ t('portfolio.activity') }}
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f]">
+                      {{ t('portfolio.description') }}
                     </h3>
                   </header>
-                  <div class="px-4 py-3 flex flex-col gap-3">
-                    <div>
-                      <div
-                        class="text-xs font-semibold text-brand-dark uppercase tracking-wide mb-1.5"
-                      >
-                        {{ t('portfolio.description') }}
-                      </div>
-                      <div class="max-h-[180px] overflow-y-auto custom-scrollbar pr-1">
-                        <p
-                          class="text-[13px] text-brand-text leading-relaxed text-justify"
-                        >
-                          {{ person.activity.description }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="border-t border-gray-100 pt-3">
-                      <div
-                        class="text-xs font-semibold text-brand-dark uppercase tracking-wide mb-1.5"
-                      >
-                        {{ t('portfolio.stateEvents') }}
-                      </div>
-                      <div class="max-h-[140px] overflow-y-auto custom-scrollbar pr-1">
-                        <p
-                          class="text-[13px] text-brand-text leading-relaxed text-justify"
-                        >
-                          {{ person.activity.stateEvents }}
-                        </p>
-                      </div>
-                    </div>
+                  <div class="px-4 py-3 flex-grow overflow-y-auto custom-scrollbar min-h-0">
+                    <p class="text-[13px] text-brand-text leading-relaxed text-justify">
+                      {{ person.activity.description }}
+                    </p>
+                  </div>
+                </section>
+
+                <!-- 3. Davlat tadbirlari -->
+                <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-auto min-h-[100px]">
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fef3e2] shrink-0">
+                    <span class="w-1 h-4 rounded-full bg-[#c98135]"></span>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25]">
+                      {{ t('portfolio.stateEvents') }}
+                    </h3>
+                  </header>
+                  <div class="px-4 py-3 flex-grow overflow-y-auto custom-scrollbar min-h-0">
+                    <p class="text-[13px] text-brand-text leading-relaxed text-justify">
+                      {{ person.activity.stateEvents }}
+                    </p>
                   </div>
                 </section>
               </div>
