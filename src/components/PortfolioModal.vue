@@ -173,7 +173,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         >
           <article
             :key="person.id"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl h-[94vh] overflow-hidden flex flex-col"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden flex flex-col"
           >
             <!-- Compact hero -->
             <div
@@ -229,7 +229,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
             <!-- 3 columns filling the landscape width -->
             <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 flex-grow overflow-hidden min-h-0">
               <!-- Column 1 -->
-              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
+              <div class="flex flex-col gap-4">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
@@ -330,7 +330,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               </div>
 
               <!-- Column 2 -->
-              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
+              <div class="flex flex-col gap-4">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
