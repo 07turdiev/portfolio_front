@@ -15,12 +15,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor-vue': ['vue', 'vue-router', 'vue-i18n'],
-          'vendor-axios': ['axios'],
-          'map-data': [
-            './src/data/districtGeoCentroids.js',
-            './src/data/projectedMap.js',
-            './src/data/uzbekistanRegions.js'
-          ]
+          'vendor-axios': ['axios']
         }
       }
     },

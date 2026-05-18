@@ -1,15 +1,21 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  COUNTRY_VIEWBOX,
-  regions as projectedRegions,
-  regionViewBoxes,
-  districtsByRegion
-} from '../data/projectedMap'
 import { projectPoint } from '../utils/geoProjection'
 import { DISTRICT_GEO_CENTROIDS } from '../data/districtGeoCentroids'
 import { usePortfolioData } from '../composables/usePortfolioData'
+
+// Katta xarita ma'lumotlari — bundle'ga kirmaydi, runtime'da yuklanadi
+const mapData = ref(null)
+onMounted(async () => {
+  const res = await fetch('/data/projectedMap.json')
+  mapData.value = await res.json()
+})
+
+const COUNTRY_VIEWBOX = computed(() => mapData.value?.COUNTRY_VIEWBOX || '0 0 940 631')
+const projectedRegions = computed(() => mapData.value?.regions || [])
+const regionViewBoxes = computed(() => mapData.value?.regionViewBoxes || {})
+const districtsByRegion = computed(() => mapData.value?.districtsByRegion || {})
 
 const { t } = useI18n()
 const {
@@ -59,12 +65,12 @@ const countryMarkers = computed(() => makeMarkers(peopleForMarkers.value))
 
 const regionDistricts = computed(() => {
   if (!selectedRegionKey.value) return []
-  return districtsByRegion[selectedRegionKey.value] || []
+  return districtsByRegion.value[selectedRegionKey.value] || []
 })
 
 const regionViewBox = computed(() => {
-  if (!selectedRegionKey.value) return COUNTRY_VIEWBOX
-  return regionViewBoxes[selectedRegionKey.value] || COUNTRY_VIEWBOX
+  if (!selectedRegionKey.value) return COUNTRY_VIEWBOX.value
+  return regionViewBoxes.value[selectedRegionKey.value] || COUNTRY_VIEWBOX.value
 })
 
 const regionMarkers = computed(() => {
@@ -77,14 +83,14 @@ const regionMarkers = computed(() => {
 })
 
 const regionOptions = computed(() =>
-  Object.keys(districtsByRegion)
+  Object.keys(districtsByRegion.value)
     .map((key) => ({ key, label: t(`regions.names.${key}`) }))
     .sort((a, b) => a.label.localeCompare(b.label))
 )
 
 const districtOptions = computed(() => {
   if (!selectedRegionKey.value) return []
-  return districtsByRegion[selectedRegionKey.value] || []
+  return districtsByRegion.value[selectedRegionKey.value] || []
 })
 
 function onRegionChange(value) {
