@@ -19,11 +19,15 @@ const PHOTO = '/img/person-placeholder.jpg'
 const person = computed(() => selectedPerson.value)
 const isDeceased = computed(() => person.value?.work?.healthKey === 'deceased')
 
-const HEALTH_BADGE_CLASS = {
-  good: 'bg-green-100 text-green-800 border-green-300',
-  average: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  poor: 'bg-red-100 text-red-800 border-red-300',
-  deceased: 'bg-gray-300 text-gray-800 border-gray-400'
+// Sog'lig'i bloki uchun fon va aksent rangi
+const HEALTH_HEADER_CLASS = {
+  good:     { bg: 'bg-green-50',  bar: 'bg-green-600',  text: 'text-green-800' },
+  average:  { bg: 'bg-yellow-50', bar: 'bg-yellow-600', text: 'text-yellow-800' },
+  poor:     { bg: 'bg-red-50',    bar: 'bg-red-600',    text: 'text-red-800' },
+  deceased: { bg: 'bg-gray-100',  bar: 'bg-gray-500',   text: 'text-gray-700' }
+}
+function healthClasses(key) {
+  return HEALTH_HEADER_CLASS[key] || { bg: 'bg-gray-50', bar: 'bg-gray-400', text: 'text-gray-700' }
 }
 
 function placeLabel(districtName, regionKey) {
@@ -80,7 +84,6 @@ const workRows = computed(() => {
     { l: t('portfolio.totalExperience'), v: w.totalExperience },
     { l: t('portfolio.leadershipExperience'), v: w.leadershipExperience },
     { l: t('portfolio.leadershipPositions'), v: w.leadershipPositions },
-    { l: t('portfolio.health'), v: w.health, isHealth: true, healthKey: w.healthKey },
     { l: t('portfolio.lastMedicalTreatment'), v: w.lastMedicalTreatment },
     { l: t('portfolio.medicalCheckup'), v: w.medicalCheckup },
     { l: t('portfolio.healthProblems'), v: w.healthProblems }
@@ -181,10 +184,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         >
           <article
             :key="person.id"
-            :class="[
-              'bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300',
-              isDeceased && 'deceased-modal'
-            ]"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300"
+            :style="isDeceased ? { filter: 'grayscale(100%)', WebkitFilter: 'grayscale(100%)' } : {}"
           >
             <!-- Compact hero -->
             <div
@@ -390,35 +391,35 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                     </h3>
                   </header>
                   <dl class="px-4 py-2">
-                    <template v-for="row in workRows" :key="row.l">
-                      <!-- Sog'lig'i — o'z joyida ajralib turadi (badge bilan) -->
-                      <div
-                        v-if="row.isHealth"
-                        class="flex gap-3 py-2 border-b border-gray-100 last:border-0 text-[13px] items-center"
-                      >
-                        <dt class="w-2/5 text-brand-muted shrink-0 font-semibold">
-                          {{ row.l }}
-                        </dt>
-                        <dd class="w-3/5">
-                          <span
-                            class="inline-flex items-center gap-1.5 font-bold text-xs px-3 py-1 rounded-full border"
-                            :class="HEALTH_BADGE_CLASS[row.healthKey] || 'bg-gray-100 text-gray-700 border-gray-200'"
-                          >
-                            <span aria-hidden="true">●</span>
-                            {{ row.v }}
-                          </span>
-                        </dd>
-                      </div>
-                      <!-- Oddiy qator -->
-                      <div
-                        v-else
-                        class="flex gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
-                      >
-                        <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
-                        <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
-                      </div>
-                    </template>
+                    <div
+                      v-for="row in workRows"
+                      :key="row.l"
+                      class="flex gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
+                    >
+                      <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
+                      <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
+                    </div>
                   </dl>
+                </section>
+
+                <!-- Sog'lig'i — alohida sarlavha blok, ranglar holatga qarab -->
+                <section
+                  v-if="person.work.health"
+                  class="rounded-lg border overflow-hidden"
+                  :class="[healthClasses(person.work.healthKey).bg, 'border-gray-200']"
+                >
+                  <header class="flex items-center gap-2 px-4 py-2.5">
+                    <span
+                      class="w-1 h-4 rounded-full"
+                      :class="healthClasses(person.work.healthKey).bar"
+                    ></span>
+                    <h3
+                      class="text-xs font-bold uppercase tracking-wider"
+                      :class="healthClasses(person.work.healthKey).text"
+                    >
+                      {{ t('portfolio.health') }}: {{ person.work.health }}
+                    </h3>
+                  </header>
                 </section>
               </div>
 
@@ -494,11 +495,3 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
     </Transition>
   </Teleport>
 </template>
-
-<style scoped>
-/* Vafot etgan vakil — butun karta to'liq kul rang (rasm, gradient, badge — hammasi) */
-.deceased-modal {
-  filter: grayscale(100%);
-  -webkit-filter: grayscale(100%);
-}
-</style>
