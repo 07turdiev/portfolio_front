@@ -173,11 +173,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         >
           <article
             :key="person.id"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden flex flex-col"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden"
           >
             <!-- Compact hero -->
             <div
-              class="bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4 shrink-0"
+              class="bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4"
             >
               <div class="min-w-0">
                 <div
@@ -227,9 +227,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
             </div>
 
             <!-- 3 columns filling the landscape width -->
-            <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 flex-grow overflow-hidden min-h-0">
+            <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
               <!-- Column 1 -->
-              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
+              <div class="flex flex-col gap-4">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
@@ -330,7 +330,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               </div>
 
               <!-- Column 2 -->
-              <div class="flex flex-col gap-4 h-full overflow-y-auto custom-scrollbar pr-1 min-h-0">
+              <div class="flex flex-col gap-4">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
@@ -374,17 +374,17 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
               </div>
 
-              <!-- Column 3 — 3 ta bo'lim content asosida bir-birining joyini egallaydi -->
-              <div class="flex flex-col gap-4 h-full min-h-0">
+              <!-- Column 3 — 3 ta alohida bo'lim, har biri max-h + scroll -->
+              <div class="flex flex-col gap-4">
                 <!-- 1. Yutuqlar -->
-                <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-auto min-h-[100px]">
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9] shrink-0">
+                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
                       {{ t('portfolio.achievements') }}
                     </h3>
                   </header>
-                  <ul class="px-4 py-2 flex flex-col flex-grow overflow-y-auto custom-scrollbar min-h-0">
+                  <ul class="px-4 py-2 max-h-[220px] overflow-y-auto custom-scrollbar">
                     <li
                       v-for="(ach, idx) in person.achievements"
                       :key="idx"
@@ -401,14 +401,14 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
 
                 <!-- 2. Tavsifnoma -->
-                <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-auto min-h-[100px]">
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4] shrink-0">
+                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4]">
                     <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f]">
                       {{ t('portfolio.description') }}
                     </h3>
                   </header>
-                  <div class="px-4 py-3 flex-grow overflow-y-auto custom-scrollbar min-h-0">
+                  <div class="px-4 py-3 max-h-[260px] overflow-y-auto custom-scrollbar">
                     <p class="text-[13px] text-brand-text leading-relaxed text-justify">
                       {{ person.activity.description }}
                     </p>
@@ -416,14 +416,14 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
 
                 <!-- 3. Davlat tadbirlari -->
-                <section class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-auto min-h-[100px]">
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fef3e2] shrink-0">
+                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fef3e2]">
                     <span class="w-1 h-4 rounded-full bg-[#c98135]"></span>
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25]">
                       {{ t('portfolio.stateEvents') }}
                     </h3>
                   </header>
-                  <div class="px-4 py-3 flex-grow overflow-y-auto custom-scrollbar min-h-0">
+                  <div class="px-4 py-3 max-h-[160px] overflow-y-auto custom-scrollbar">
                     <p class="text-[13px] text-brand-text leading-relaxed text-justify">
                       {{ person.activity.stateEvents }}
                     </p>
