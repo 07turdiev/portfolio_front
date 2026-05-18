@@ -1,0 +1,94 @@
+{
+  "affiliations": [
+    {
+      "key": "state",
+      "types": [
+        {
+          "key": "hero",
+          "names": [{ "key": "hero_uzbekistan" }]
+        },
+        {
+          "key": "honorary_titles",
+          "names": [
+            { "key": "art_arbob" },
+            { "key": "science_arbob" },
+            { "key": "iftihor" },
+            { "key": "xalq_artisti" },
+            { "key": "xalq_baxshi" },
+            { "key": "xalq_yozuvchi" },
+            { "key": "xalq_rassom" },
+            { "key": "xalq_usta" },
+            { "key": "xalq_shoir" },
+            { "key": "xalq_oqituvchi" },
+            { "key": "xalq_hofiz" },
+            { "key": "kommunal_xodim" },
+            { "key": "aloqa_xodim" },
+            { "key": "xizmat_artisti" },
+            { "key": "geolog" },
+            { "key": "yoshlar_murabbiy" },
+            { "key": "jurnalist" },
+            { "key": "irrigator" },
+            { "key": "ixtirochi" },
+            { "key": "iqtisodchi" },
+            { "key": "madaniyat_xodim" },
+            { "key": "memor" },
+            { "key": "paxtakor" },
+            { "key": "pillachi" },
+            { "key": "sanoat_xodim" },
+            { "key": "soglik_xodim" },
+            { "key": "sport_ustoz" },
+            { "key": "sportchi" },
+            { "key": "tadbirkor" },
+            { "key": "transport_xodim" },
+            { "key": "aviatsiya_xodim" },
+            { "key": "talim_xodim" },
+            { "key": "chorvador" },
+            { "key": "ekolog" },
+            { "key": "yurist" },
+            { "key": "qishloq_xodim" },
+            { "key": "quruvchi" }
+          ]
+        },
+        {
+          "key": "orders",
+          "names": [
+            { "key": "mustaqillik" },
+            { "key": "amir_temur" },
+            { "key": "jaloliddin_manguberdi" },
+            { "key": "buyuk_xizmat" },
+            { "key": "el_yurt_hurmati" },
+            { "key": "fidokorona_xizmat" },
+            { "key": "mehnat_shuhrati" },
+            { "key": "faxriy_murabbiy" },
+            { "key": "soglom_avlod" },
+            { "key": "shon_sharaf" },
+            { "key": "dostlik" },
+            { "key": "salomatlik" },
+            { "key": "mardlik" },
+            { "key": "oliy_dostlik" },
+            { "key": "oliy_imom_buxoriy" },
+            { "key": "imom_buxoriy" }
+          ]
+        },
+        {
+          "key": "medals",
+          "names": [
+            { "key": "jasorat" },
+            { "key": "sodiq_xizmat" },
+            { "key": "soglom_turmush" },
+            { "key": "kelajak_bunyodkori" },
+            { "key": "shuhrat" }
+          ]
+        },
+        {
+          "key": "honorary_diploma",
+          "names": [{ "key": "faxriy_yorliq_uz" }]
+        }
+      ]
+    },
+    { "key": "karakalpakstan", "types": [] },
+    { "key": "ministry", "types": [] },
+    { "key": "foreign", "types": [] },
+    { "key": "international", "types": [] }
+  ]
+}
