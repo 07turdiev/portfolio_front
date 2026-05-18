@@ -33,7 +33,7 @@ const personalRows = computed(() => {
     { l: t('portfolio.middleName'), v: p.middleName },
     { l: t('portfolio.nationality'), v: p.nationality },
     { l: t('portfolio.birthDate'), v: p.birthDate }
-  ]
+  ].filter((r) => r.v && String(r.v).trim())
 })
 
 const placeRows = computed(() => {
@@ -48,7 +48,7 @@ const placeRows = computed(() => {
       l: t('portfolio.residence'),
       v: placeLabel(p.districtName, p.regionKey)
     }
-  ]
+  ].filter((r) => r.v && String(r.v).trim())
 })
 
 const educationRows = computed(() => {
@@ -60,7 +60,7 @@ const educationRows = computed(() => {
     { l: t('portfolio.academicDegree'), v: e.academicDegree },
     { l: t('portfolio.languages'), v: e.languages },
     { l: t('portfolio.training'), v: e.training }
-  ]
+  ].filter((r) => r.v && String(r.v).trim())
 })
 
 const workRows = computed(() => {
@@ -76,7 +76,7 @@ const workRows = computed(() => {
     { l: t('portfolio.lastMedicalTreatment'), v: w.lastMedicalTreatment },
     { l: t('portfolio.medicalCheckup'), v: w.medicalCheckup },
     { l: t('portfolio.healthProblems'), v: w.healthProblems }
-  ]
+  ].filter((r) => r.v && String(r.v).trim())
 })
 
 function onKey(e) {
@@ -262,7 +262,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                         </div>
                       </dl>
                     </div>
-                    <dl class="mt-1">
+                    <dl v-if="placeRows.length" class="mt-1">
                       <div
                         v-for="row in placeRows"
                         :key="row.l"
@@ -279,7 +279,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </div>
                 </section>
 
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                <section
+                  v-if="person.family.maritalStatus && person.family.maritalStatus.trim()"
+                  class="rounded-lg border border-gray-200 overflow-hidden"
+                >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
@@ -298,7 +301,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </div>
                 </section>
 
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                <section
+                  v-if="person.family.members && person.family.members.length"
+                  class="rounded-lg border border-gray-200 overflow-hidden"
+                >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
@@ -318,11 +324,16 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       >
                         {{ t(`portfolio.${member.relation}`) }}
                       </div>
-                      <div class="font-medium text-brand-dark">
+                      <div v-if="member.name" class="font-medium text-brand-dark">
                         {{ member.name }}
                       </div>
-                      <div class="text-brand-muted text-xs">
-                        {{ member.info }} — {{ member.note }}
+                      <div
+                        v-if="member.info || member.note"
+                        class="text-brand-muted text-xs"
+                      >
+                        <template v-if="member.info">{{ member.info }}</template>
+                        <template v-if="member.info && member.note"> — </template>
+                        <template v-if="member.note">{{ member.note }}</template>
                       </div>
                     </div>
                   </div>
@@ -331,7 +342,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
 
               <!-- Column 2 -->
               <div class="flex flex-col gap-4">
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                <section
+                  v-if="educationRows.length"
+                  class="rounded-lg border border-gray-200 overflow-hidden"
+                >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3
@@ -352,7 +366,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </dl>
                 </section>
 
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                <section
+                  v-if="workRows.length"
+                  class="rounded-lg border border-gray-200 overflow-hidden"
+                >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3
@@ -377,7 +394,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               <!-- Column 3 — 3 ta alohida bo'lim, har biri max-h + scroll -->
               <div class="flex flex-col gap-4">
                 <!-- 1. Yutuqlar -->
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                <section
+                  v-if="person.achievements && person.achievements.length"
+                  class="rounded-lg border border-gray-200 overflow-hidden"
+                >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
@@ -401,7 +421,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
 
                 <!-- 2. Tavsifnoma -->
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                <section
+                  v-if="person.activity.description && person.activity.description.trim()"
+                  class="rounded-lg border border-gray-200 overflow-hidden"
+                >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4]">
                     <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f]">
@@ -416,7 +439,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
 
                 <!-- 3. Davlat tadbirlari -->
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+                <section
+                  v-if="person.activity.stateEvents && person.activity.stateEvents.trim()"
+                  class="rounded-lg border border-gray-200 overflow-hidden"
+                >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fef3e2]">
                     <span class="w-1 h-4 rounded-full bg-[#c98135]"></span>
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25]">
