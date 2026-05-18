@@ -174,8 +174,9 @@ function goToToday() {
         class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-5 md:gap-6"
       >
         <img
-          :src="PHOTO"
+          :src="upcoming.person.photo || PHOTO"
           :alt="upcoming.person.fullName"
+          @error="(e) => (e.target.src = PHOTO)"
           class="w-[80px] h-[100px] object-cover shrink-0 mx-auto md:mx-0 rounded-md"
         />
 

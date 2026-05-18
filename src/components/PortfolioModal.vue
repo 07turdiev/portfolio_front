@@ -15,6 +15,7 @@ const {
   goToNextPerson
 } = usePortfolioData()
 
+const PHOTO = '/img/person-placeholder.jpg'
 const person = computed(() => selectedPerson.value)
 
 function placeLabel(districtName, regionKey) {
@@ -241,8 +242,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <div class="p-4">
                     <div class="flex gap-4">
                       <img
-                        src="/img/person-placeholder.jpg"
+                        :src="person.photo || PHOTO"
                         :alt="person.fullName"
+                        @error="(e) => (e.target.src = PHOTO)"
                         class="w-24 h-32 object-cover border border-gray-200 rounded shrink-0"
                       />
                       <dl class="flex-grow min-w-0">

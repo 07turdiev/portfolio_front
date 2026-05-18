@@ -365,8 +365,9 @@ const nameOptions = computed(() => {
         class="flex items-center gap-3 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors px-2 rounded text-left w-full"
       >
         <img
-          :src="PHOTO"
+          :src="person.photo || PHOTO"
           :alt="person.fullName"
+          @error="(e) => (e.target.src = PHOTO)"
           class="w-10 h-10 rounded-full object-cover shrink-0 border border-gray-200"
         />
         <div class="min-w-0 flex-grow">
