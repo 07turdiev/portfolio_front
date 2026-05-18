@@ -383,7 +383,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       {{ t('portfolio.achievements') }}
                     </h3>
                   </header>
-                  <ul class="px-4 py-2 flex flex-col">
+                  <ul class="px-4 py-2 flex flex-col max-h-[280px] overflow-y-auto custom-scrollbar">
                     <li
                       v-for="(ach, idx) in person.achievements"
                       :key="idx"
@@ -417,11 +417,13 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       >
                         {{ t('portfolio.description') }}
                       </div>
-                      <p
-                        class="text-[13px] text-brand-text leading-relaxed text-justify"
-                      >
-                        {{ person.activity.description }}
-                      </p>
+                      <div class="max-h-[180px] overflow-y-auto custom-scrollbar pr-1">
+                        <p
+                          class="text-[13px] text-brand-text leading-relaxed text-justify"
+                        >
+                          {{ person.activity.description }}
+                        </p>
+                      </div>
                     </div>
                     <div class="border-t border-gray-100 pt-3">
                       <div
@@ -429,11 +431,13 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       >
                         {{ t('portfolio.stateEvents') }}
                       </div>
-                      <p
-                        class="text-[13px] text-brand-text leading-relaxed text-justify"
-                      >
-                        {{ person.activity.stateEvents }}
-                      </p>
+                      <div class="max-h-[140px] overflow-y-auto custom-scrollbar pr-1">
+                        <p
+                          class="text-[13px] text-brand-text leading-relaxed text-justify"
+                        >
+                          {{ person.activity.stateEvents }}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </section>
