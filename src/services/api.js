@@ -51,6 +51,9 @@ function reshapePerson(p) {
     regionKey: region?.slug || '',
     districtId: district?.slug || district?.soato || '',
     districtName: pickLang(district?.name),
+    // Backend yuborgan tuman markazi (lat/lng) — markerlar uchun
+    districtLat: district?.lat ?? null,
+    districtLng: district?.lng ?? null,
     // Tug'ilgan hudud hozircha matn sifatida saqlanadi (struct emas)
     birthRegionKey: '',
     birthDistrictId: '',

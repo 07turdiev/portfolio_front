@@ -50,22 +50,33 @@ const peopleForMarkers = computed(() => {
   return list
 })
 
-// Bir tumanda bir nechta vakil bo'lsa, ularni yonma-yon joylashtirish uchun
-// markaz atrofida aylana bo'yicha tarqatadi (1 ta — markazda, 2+ — radius bo'yicha).
+// Marker pozitsiyasini hisoblaydi.
+// Avval backenddan kelgan districtLat/Lng ishlatiladi (aniq markaz).
+// Agar yo'q bo'lsa, DISTRICT_GEO_CENTROIDS dan slug bo'yicha topiladi.
+// Bir tumanda bir nechta vakil bo'lsa, ular markaz atrofida grid shaklida
+// (yonma-yon, ustma-ust chiqmasdan) joylashadi.
+function getDistrictCenter(p) {
+  if (p.districtLat != null && p.districtLng != null) {
+    return projectPoint(p.districtLat, p.districtLng)
+  }
+  const c = DISTRICT_GEO_CENTROIDS[p.districtId]
+  if (c) return projectPoint(c.lat, c.lng)
+  return null
+}
+
 function makeMarkers(list) {
-  // 1) Avval district bo'yicha guruhlaymiz
+  // 1) District bo'yicha guruhlash
   const byDistrict = new Map()
   for (const p of list) {
-    if (!p.districtId) continue
-    const c = DISTRICT_GEO_CENTROIDS[p.districtId]
-    if (!c) continue
-    if (!byDistrict.has(p.districtId)) {
-      byDistrict.set(p.districtId, { center: projectPoint(c.lat, c.lng), people: [] })
-    }
-    byDistrict.get(p.districtId).people.push(p)
+    const center = getDistrictCenter(p)
+    if (!center) continue
+    const key = p.districtId || `${p.districtLat},${p.districtLng}`
+    if (!byDistrict.has(key)) byDistrict.set(key, { center, people: [] })
+    byDistrict.get(key).people.push(p)
   }
 
-  // 2) Har guruhni markaz atrofida tarqatamiz
+  // 2) Har guruh uchun grid joylashtirish (yonma-yon, ustma-ust emas)
+  const STEP = 3.5 // markerlar orasidagi masofa (SVG birligida)
   const out = []
   for (const { center, people } of byDistrict.values()) {
     const n = people.length
@@ -73,14 +84,18 @@ function makeMarkers(list) {
       out.push({ person: people[0], x: center.x, y: center.y })
       continue
     }
-    // 2+ vakil → markaz atrofida aylana. Radius soniga qarab.
-    const r = Math.min(3 + n * 0.4, 7)
+    // Kvadrat shakldagi grid: ceil(sqrt(n)) ustun va qator
+    const cols = Math.ceil(Math.sqrt(n))
+    const rows = Math.ceil(n / cols)
+    const offsetX = ((cols - 1) * STEP) / 2
+    const offsetY = ((rows - 1) * STEP) / 2
     for (let i = 0; i < n; i++) {
-      const angle = (2 * Math.PI * i) / n - Math.PI / 2 // tepadan boshlanadi
+      const col = i % cols
+      const row = Math.floor(i / cols)
       out.push({
         person: people[i],
-        x: center.x + r * Math.cos(angle),
-        y: center.y + r * Math.sin(angle)
+        x: center.x - offsetX + col * STEP,
+        y: center.y - offsetY + row * STEP
       })
     }
   }
