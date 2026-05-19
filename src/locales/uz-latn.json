@@ -14,12 +14,14 @@
     "education": "TA'LIM YO'NALISHI SOHA VAKILLARI",
     "heritage": "NOMODDIY MADANIY MEROS YO'NALISHI BO'YICHA SOHA VAKILLARI",
     "cinema": "KINO SOHASI VAKILLARI",
-    "concert": "KONSERT-TOMOSHA YO'NALISHI SOHA VAKILLARI"
+    "concert": "KONSERT-TOMOSHA YO'NALISHI SOHA VAKILLARI",
+    "representativesShort": "vakil"
   },
   "map": {
     "title": "O'zbekiston Respublikasi",
     "back": "Umumiy xaritaga qaytish",
-    "hint": "Tumanlarni ko'rish uchun viloyatni tanlang"
+    "hint": "Tumanlarni ko'rish uchun viloyatni tanlang",
+    "noPeople": "Vakillar yo'q"
   },
   "regions": {
     "title": "Hududlar",

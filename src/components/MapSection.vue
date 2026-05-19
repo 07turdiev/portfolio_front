@@ -33,6 +33,47 @@ const {
 } = usePortfolioData()
 
 const hoveredName = ref('')
+const hover = ref(null) // { x, y, type, name, count, men, women, sub }
+const mapContainer = ref(null)
+
+function setHover(e, payload) {
+  if (!payload) {
+    hover.value = null
+    hoveredName.value = ''
+    return
+  }
+  const rect = mapContainer.value?.getBoundingClientRect()
+  const x = rect ? e.clientX - rect.left : 0
+  const y = rect ? e.clientY - rect.top : 0
+  hover.value = { ...payload, x, y }
+  hoveredName.value = payload.name
+}
+
+function moveHover(e) {
+  if (!hover.value) return
+  const rect = mapContainer.value?.getBoundingClientRect()
+  if (!rect) return
+  hover.value.x = e.clientX - rect.left
+  hover.value.y = e.clientY - rect.top
+}
+
+function countByRegion(regionId) {
+  const list = peopleForMarkers.value.filter((p) => p.regionKey === regionId)
+  return {
+    total: list.length,
+    men: list.filter((p) => p.gender === 'male').length,
+    women: list.filter((p) => p.gender === 'female').length
+  }
+}
+
+function countByDistrict(districtId) {
+  const list = peopleForMarkers.value.filter((p) => p.districtId === districtId)
+  return {
+    total: list.length,
+    men: list.filter((p) => p.gender === 'male').length,
+    women: list.filter((p) => p.gender === 'female').length
+  }
+}
 
 const peopleForMarkers = computed(() => {
   let list = currentPeople.value
@@ -204,8 +245,10 @@ function onDistrictChange(value) {
 
     <!-- Map -->
     <div
+      ref="mapContainer"
       class="flex-grow flex items-center justify-center relative bg-[#f9fafc] rounded-lg overflow-hidden p-4 min-h-0"
-      @mouseleave="hoveredName = ''"
+      @mouseleave="setHover(null, null)"
+      @mousemove="moveHover"
     >
       <!-- Country view -->
       <svg
@@ -219,7 +262,7 @@ function onDistrictChange(value) {
           :key="region.id"
           class="region-group"
           @click="selectRegion(region.id)"
-          @mouseenter="hoveredName = t(`regions.names.${region.id}`)"
+          @mouseenter="(e) => setHover(e, { type: 'region', name: t(`regions.names.${region.id}`), ...countByRegion(region.id) })"
         >
           <path
             v-for="(p, i) in region.paths"
@@ -237,7 +280,7 @@ function onDistrictChange(value) {
             r="3"
             class="person-marker"
             @click.stop="openPerson(m.person)"
-            @mouseenter="hoveredName = m.person.fullName"
+            @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
           />
         </g>
       </svg>
@@ -256,7 +299,7 @@ function onDistrictChange(value) {
           class="region-path"
           :class="{ 'is-selected': dist.id === selectedDistrictId }"
           @click="selectDistrict(dist.id)"
-          @mouseenter="hoveredName = dist.name"
+          @mouseenter="(e) => setHover(e, { type: 'district', name: dist.name, ...countByDistrict(dist.id) })"
         />
         <g class="markers">
           <circle
@@ -267,17 +310,56 @@ function onDistrictChange(value) {
             r="2.6"
             class="person-marker"
             @click.stop="openPerson(m.person)"
-            @mouseenter="hoveredName = m.person.fullName"
+            @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
           />
         </g>
       </svg>
 
-      <!-- Hover label -->
+      <!-- Hover tooltip — kursor yonida -->
       <div
-        v-if="hoveredName"
-        class="absolute bottom-3 left-3 bg-brand-dark text-white text-xs font-medium px-2.5 py-1.5 rounded-md shadow pointer-events-none"
+        v-if="hover"
+        :style="{ left: hover.x + 14 + 'px', top: hover.y + 14 + 'px' }"
+        class="absolute z-20 bg-white shadow-xl border border-gray-200 rounded-lg px-3 py-2 pointer-events-none min-w-[140px] max-w-[280px]"
       >
-        {{ hoveredName }}
+        <div class="flex items-start gap-2">
+          <span
+            class="mt-1 inline-block w-2 h-2 rounded-full shrink-0"
+            :class="{
+              'bg-brand-primary': hover.type === 'region',
+              'bg-emerald-500': hover.type === 'district',
+              'bg-amber-500': hover.type === 'person'
+            }"
+          ></span>
+          <div class="min-w-0">
+            <div class="text-[13px] font-bold text-brand-dark leading-tight">
+              {{ hover.name }}
+            </div>
+            <!-- Region/District: vakillar soni -->
+            <div
+              v-if="hover.type !== 'person' && hover.total > 0"
+              class="mt-1 flex items-center gap-2 text-[11px]"
+            >
+              <span class="font-bold text-brand-primary">
+                {{ hover.total }} {{ t('directions.representativesShort') }}
+              </span>
+              <span v-if="hover.men" class="text-blue-600">♂ {{ hover.men }}</span>
+              <span v-if="hover.women" class="text-pink-600">♀ {{ hover.women }}</span>
+            </div>
+            <div
+              v-else-if="hover.type !== 'person'"
+              class="mt-0.5 text-[11px] text-brand-muted italic"
+            >
+              {{ t('map.noPeople') }}
+            </div>
+            <!-- Person: lavozim -->
+            <div
+              v-if="hover.type === 'person' && hover.sub"
+              class="mt-0.5 text-[11px] text-brand-muted truncate"
+            >
+              {{ hover.sub }}
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Back to country map -->
