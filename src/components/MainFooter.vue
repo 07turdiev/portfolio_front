@@ -12,15 +12,6 @@ const { t } = useI18n()
       class="flex flex-col md:flex-row items-center justify-between gap-4"
     >
       <div>{{ t('footer.copyright') }}</div>
-      <div class="flex gap-6">
-        <a href="#" class="hover:text-white transition-colors">
-          {{ t('footer.about') }}
-        </a>
-        <span class="text-[#4b6a9c]">|</span>
-        <a href="#" class="hover:text-white transition-colors">
-          {{ t('footer.faqs') }}
-        </a>
-      </div>
       <div>
         <a href="https://madaniyat.uz" target="_blank" class="hover:text-white transition-colors">madaniyat.uz</a>
         <span class="text-[#4b6a9c]"> | </span>
