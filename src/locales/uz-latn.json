@@ -207,7 +207,8 @@
   "footer": {
     "copyright": "© 2026 O'zbekiston Respublikasi Madaniyat vazirligi. Barcha huquqlar himoyalangan.",
     "about": "Tizim haqida",
-    "faqs": "Ko'p so'raladigan savollar"
+    "faqs": "Ko'p so'raladigan savollar",
+    "developedBy": "tomonidan ishlab chiqilgan"
   },
   "common": {
     "loading": "Yuklanmoqda..."

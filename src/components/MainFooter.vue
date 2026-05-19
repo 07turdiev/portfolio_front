@@ -27,5 +27,10 @@ const { t } = useI18n()
         <a href="https://madaniyhayot.uz" target="_blank" class="hover:text-white transition-colors">madaniyhayot.uz</a>
       </div>
     </div>
+    <!-- Ishlab chiquvchi -->
+    <div class="border-t border-[#2a3854]/60 mt-4 pt-3 text-center text-xs text-[#7188ad]">
+      <span class="font-semibold tracking-wide">"MADANIY HAYOT MEDIA MARKETING MARKAZI"</span>
+      MCHJ {{ t('footer.developedBy') }}
+    </div>
   </footer>
 </template>
