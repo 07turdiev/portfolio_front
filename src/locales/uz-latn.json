@@ -181,7 +181,8 @@
     "activity": "FAOLIYATI",
     "description": "Mehnat faoliyati haqida qisqacha tavsifnoma",
     "stateEvents": "Davlat tadbirlaridagi ishtiroki",
-    "region": "Hududi"
+    "region": "Hududi",
+    "exportPdf": "PDF sifatida yuklab olish"
   },
   "calendar": {
     "title": "Tug'ilgan kunlar kalendari",

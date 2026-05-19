@@ -20,7 +20,7 @@ const {
   openPerson
 } = usePortfolioData()
 
-const PHOTO = '/img/person-placeholder.jpg'
+const PHOTO = '/img/person-placeholder.svg'
 
 const advancedOpen = ref(false)
 

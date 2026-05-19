@@ -1,9 +1,49 @@
 <script setup>
-import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePortfolioData } from '../composables/usePortfolioData'
 
 const { t } = useI18n()
+const articleRef = ref(null)
+const exporting = ref(false)
+
+async function exportPdf() {
+  if (!articleRef.value || exporting.value) return
+  exporting.value = true
+  try {
+    const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+      import('html2canvas'),
+      import('jspdf')
+    ])
+    const el = articleRef.value
+    // Yuqori sifatli canvas (2x)
+    const canvas = await html2canvas(el, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      windowWidth: el.scrollWidth,
+      windowHeight: el.scrollHeight
+    })
+    const imgData = canvas.toDataURL('image/png')
+
+    // PDF landscape (modal landscape ko'rinishida)
+    const w = canvas.width
+    const h = canvas.height
+    const pdf = new jsPDF({
+      orientation: w > h ? 'landscape' : 'portrait',
+      unit: 'pt',
+      format: [w, h]
+    })
+    pdf.addImage(imgData, 'PNG', 0, 0, w, h)
+    const safe = (selectedPerson.value?.fullName || 'portfolio').replace(/[\/\\?%*:|"<>]/g, '-')
+    pdf.save(`${safe}.pdf`)
+  } catch (e) {
+    console.error('PDF eksport xatosi:', e)
+  } finally {
+    exporting.value = false
+  }
+}
 const {
   selectedPerson,
   selectedPersonIndex,
@@ -15,7 +55,7 @@ const {
   goToNextPerson
 } = usePortfolioData()
 
-const PHOTO = '/img/person-placeholder.jpg'
+const PHOTO = '/img/person-placeholder.svg'
 const person = computed(() => selectedPerson.value)
 const isDeceased = computed(() => person.value?.work?.healthKey === 'deceased')
 
@@ -112,6 +152,23 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         class="fixed inset-0 z-[100] bg-brand-dark/70 backdrop-blur-sm flex items-center justify-center p-3 lg:px-20"
         @click.self="closePerson"
       >
+        <!-- PDF eksport -->
+        <button
+          type="button"
+          @click="exportPdf"
+          :disabled="exporting"
+          :title="t('portfolio.exportPdf')"
+          class="fixed top-5 right-[68px] z-[110] h-10 px-3.5 flex items-center gap-2 rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-colors disabled:opacity-60 disabled:cursor-wait"
+        >
+          <svg v-if="!exporting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M12 10v6m0 0l-3-3m3 3l3-3M5 21h14a2 2 0 002-2v-4M3 12V5a2 2 0 012-2h7l5 5v2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </svg>
+          <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="40 80" stroke-linecap="round"/>
+          </svg>
+          <span class="text-xs font-semibold">PDF</span>
+        </button>
+
         <!-- Close -->
         <button
           type="button"
@@ -180,6 +237,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           leave-to-class="opacity-0 -translate-x-3"
         >
           <article
+            ref="articleRef"
             :key="person.id"
             class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300"
             :style="isDeceased ? { filter: 'grayscale(100%)', WebkitFilter: 'grayscale(100%)' } : {}"

@@ -6,7 +6,7 @@ import { usePortfolioData } from '../composables/usePortfolioData'
 const { t, tm } = useI18n()
 const { filteredPeople, openPerson } = usePortfolioData()
 
-const PHOTO = '/img/person-placeholder.jpg'
+const PHOTO = '/img/person-placeholder.svg'
 const VISIBLE_PILLS = 2
 
 const today = (() => {
