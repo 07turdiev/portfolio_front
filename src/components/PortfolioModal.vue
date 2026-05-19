@@ -11,38 +11,37 @@ async function exportPdf() {
   if (!articleRef.value || exporting.value) return
   exporting.value = true
 
-  const el = articleRef.value
-  // PDF olishdan oldin barcha scroll'larni vaqtincha ochib qo'yamiz
-  const expanded = []
-  const allEls = el.querySelectorAll('*')
-  for (const node of [el, ...allEls]) {
+  const original = articleRef.value
+  // Asl element'ning aniq nusxasini ekran ortida yaratamiz — foydalanuvchi hech narsa ko'rmaydi
+  const clone = original.cloneNode(true)
+  clone.style.position = 'fixed'
+  clone.style.top = '0'
+  clone.style.left = '-100000px'
+  clone.style.width = original.offsetWidth + 'px'
+  clone.style.maxHeight = 'none'
+  clone.style.height = 'auto'
+  clone.style.overflow = 'visible'
+  clone.style.transition = 'none'
+  document.body.appendChild(clone)
+
+  // Clone ichidagi barcha scroll/max-height'larni ochish
+  for (const node of clone.querySelectorAll('*')) {
     const cs = getComputedStyle(node)
-    const hasScroll = cs.overflow === 'auto' || cs.overflow === 'scroll' ||
-                      cs.overflowY === 'auto' || cs.overflowY === 'scroll' ||
-                      cs.overflowX === 'auto' || cs.overflowX === 'scroll' ||
-                      cs.overflow === 'hidden' || cs.overflowY === 'hidden' ||
-                      cs.maxHeight !== 'none'
-    if (hasScroll) {
-      expanded.push({
-        node,
-        overflow: node.style.overflow,
-        overflowX: node.style.overflowX,
-        overflowY: node.style.overflowY,
-        maxHeight: node.style.maxHeight,
-        height: node.style.height
-      })
-      node.style.overflow = 'visible'
-      node.style.overflowX = 'visible'
-      node.style.overflowY = 'visible'
+    if (
+      cs.maxHeight !== 'none' ||
+      ['auto', 'scroll', 'hidden'].includes(cs.overflow) ||
+      ['auto', 'scroll', 'hidden'].includes(cs.overflowY) ||
+      ['auto', 'scroll', 'hidden'].includes(cs.overflowX)
+    ) {
       node.style.maxHeight = 'none'
       node.style.height = 'auto'
+      node.style.overflow = 'visible'
+      node.style.overflowY = 'visible'
+      node.style.overflowX = 'visible'
     }
   }
-  // Article'ning o'zini ham
-  el.style.maxHeight = 'none'
-  el.style.height = 'auto'
 
-  // Brauzer qayta hisoblashi uchun bir lahzalik kutish
+  // Brauzer layout qayta hisoblashi uchun kutish
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
 
   try {
@@ -50,16 +49,15 @@ async function exportPdf() {
       import('html2canvas'),
       import('jspdf')
     ])
-    const canvas = await html2canvas(el, {
+    const canvas = await html2canvas(clone, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
       logging: false,
-      windowWidth: el.scrollWidth,
-      windowHeight: el.scrollHeight
+      windowWidth: clone.scrollWidth,
+      windowHeight: clone.scrollHeight
     })
     const imgData = canvas.toDataURL('image/png')
-
     const w = canvas.width
     const h = canvas.height
     const pdf = new jsPDF({
@@ -73,14 +71,7 @@ async function exportPdf() {
   } catch (e) {
     console.error('PDF eksport xatosi:', e)
   } finally {
-    // Stillarni qaytarish
-    for (const item of expanded) {
-      item.node.style.overflow = item.overflow
-      item.node.style.overflowX = item.overflowX
-      item.node.style.overflowY = item.overflowY
-      item.node.style.maxHeight = item.maxHeight
-      item.node.style.height = item.height
-    }
+    document.body.removeChild(clone)
     exporting.value = false
   }
 }
@@ -343,7 +334,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286]"
+                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-none"
                     >
                       {{ t('portfolio.personal') }}
                     </h3>
@@ -395,7 +386,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286]"
+                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-none"
                     >
                       {{ t('portfolio.familyInfo') }}
                     </h3>
@@ -417,7 +408,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286]"
+                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-none"
                     >
                       {{ t('portfolio.familyMembers') }}
                     </h3>
@@ -458,7 +449,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46]"
+                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-none"
                     >
                       {{ t('portfolio.education') }}
                     </h3>
@@ -482,7 +473,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46]"
+                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-none"
                     >
                       {{ t('portfolio.work') }}
                     </h3>
@@ -511,7 +502,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       :class="healthClasses(person.work.healthKey).bar"
                     ></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider"
+                      class="text-xs font-bold uppercase tracking-wider leading-none"
                       :class="healthClasses(person.work.healthKey).text"
                     >
                       {{ t('portfolio.health') }}: {{ person.work.health }}
@@ -529,7 +520,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-none">
                       {{ t('portfolio.achievements') }}
                     </h3>
                   </header>
@@ -556,7 +547,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4] shrink-0">
                     <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f] leading-none">
                       {{ t('portfolio.description') }}
                     </h3>
                   </header>
@@ -574,7 +565,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fef3e2]">
                     <span class="w-1 h-4 rounded-full bg-[#c98135]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25] leading-none">
                       {{ t('portfolio.stateEvents') }}
                     </h3>
                   </header>
