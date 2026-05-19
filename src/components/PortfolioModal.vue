@@ -360,7 +360,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                         <div
                           v-for="row in personalRows"
                           :key="row.l"
-                          class="flex gap-2 py-1 border-b border-gray-100 last:border-0 text-[13px]"
+                          class="flex items-start gap-2 py-1 border-b border-gray-100 last:border-0 text-[13px]"
                         >
                           <dt class="w-2/5 text-brand-muted shrink-0">
                             {{ row.l }}
@@ -375,7 +375,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       <div
                         v-for="row in placeRows"
                         :key="row.l"
-                        class="flex gap-2 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
+                        class="flex items-start gap-2 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
                       >
                         <dt class="w-2/5 text-brand-muted shrink-0">
                           {{ row.l }}
@@ -467,7 +467,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                     <div
                       v-for="row in educationRows"
                       :key="row.l"
-                      class="flex gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
+                      class="flex items-start gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
                     >
                       <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
                       <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
@@ -491,7 +491,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                     <div
                       v-for="row in workRows"
                       :key="row.l"
-                      class="flex gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
+                      class="flex items-start gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
                     >
                       <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
                       <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
