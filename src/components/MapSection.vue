@@ -50,13 +50,39 @@ const peopleForMarkers = computed(() => {
   return list
 })
 
+// Bir tumanda bir nechta vakil bo'lsa, ularni yonma-yon joylashtirish uchun
+// markaz atrofida aylana bo'yicha tarqatadi (1 ta — markazda, 2+ — radius bo'yicha).
 function makeMarkers(list) {
-  const out = []
+  // 1) Avval district bo'yicha guruhlaymiz
+  const byDistrict = new Map()
   for (const p of list) {
+    if (!p.districtId) continue
     const c = DISTRICT_GEO_CENTROIDS[p.districtId]
     if (!c) continue
-    const pos = projectPoint(c.lat, c.lng)
-    out.push({ person: p, x: pos.x, y: pos.y })
+    if (!byDistrict.has(p.districtId)) {
+      byDistrict.set(p.districtId, { center: projectPoint(c.lat, c.lng), people: [] })
+    }
+    byDistrict.get(p.districtId).people.push(p)
+  }
+
+  // 2) Har guruhni markaz atrofida tarqatamiz
+  const out = []
+  for (const { center, people } of byDistrict.values()) {
+    const n = people.length
+    if (n === 1) {
+      out.push({ person: people[0], x: center.x, y: center.y })
+      continue
+    }
+    // 2+ vakil → markaz atrofida aylana. Radius soniga qarab.
+    const r = Math.min(3 + n * 0.4, 7)
+    for (let i = 0; i < n; i++) {
+      const angle = (2 * Math.PI * i) / n - Math.PI / 2 // tepadan boshlanadi
+      out.push({
+        person: people[i],
+        x: center.x + r * Math.cos(angle),
+        y: center.y + r * Math.sin(angle)
+      })
+    }
   }
   return out
 }
