@@ -10,13 +10,46 @@ const exporting = ref(false)
 async function exportPdf() {
   if (!articleRef.value || exporting.value) return
   exporting.value = true
+
+  const el = articleRef.value
+  // PDF olishdan oldin barcha scroll'larni vaqtincha ochib qo'yamiz
+  const expanded = []
+  const allEls = el.querySelectorAll('*')
+  for (const node of [el, ...allEls]) {
+    const cs = getComputedStyle(node)
+    const hasScroll = cs.overflow === 'auto' || cs.overflow === 'scroll' ||
+                      cs.overflowY === 'auto' || cs.overflowY === 'scroll' ||
+                      cs.overflowX === 'auto' || cs.overflowX === 'scroll' ||
+                      cs.overflow === 'hidden' || cs.overflowY === 'hidden' ||
+                      cs.maxHeight !== 'none'
+    if (hasScroll) {
+      expanded.push({
+        node,
+        overflow: node.style.overflow,
+        overflowX: node.style.overflowX,
+        overflowY: node.style.overflowY,
+        maxHeight: node.style.maxHeight,
+        height: node.style.height
+      })
+      node.style.overflow = 'visible'
+      node.style.overflowX = 'visible'
+      node.style.overflowY = 'visible'
+      node.style.maxHeight = 'none'
+      node.style.height = 'auto'
+    }
+  }
+  // Article'ning o'zini ham
+  el.style.maxHeight = 'none'
+  el.style.height = 'auto'
+
+  // Brauzer qayta hisoblashi uchun bir lahzalik kutish
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+
   try {
     const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
       import('html2canvas'),
       import('jspdf')
     ])
-    const el = articleRef.value
-    // Yuqori sifatli canvas (2x)
     const canvas = await html2canvas(el, {
       scale: 2,
       useCORS: true,
@@ -27,7 +60,6 @@ async function exportPdf() {
     })
     const imgData = canvas.toDataURL('image/png')
 
-    // PDF landscape (modal landscape ko'rinishida)
     const w = canvas.width
     const h = canvas.height
     const pdf = new jsPDF({
@@ -41,6 +73,14 @@ async function exportPdf() {
   } catch (e) {
     console.error('PDF eksport xatosi:', e)
   } finally {
+    // Stillarni qaytarish
+    for (const item of expanded) {
+      item.node.style.overflow = item.overflow
+      item.node.style.overflowX = item.overflowX
+      item.node.style.overflowY = item.overflowY
+      item.node.style.maxHeight = item.maxHeight
+      item.node.style.height = item.height
+    }
     exporting.value = false
   }
 }
