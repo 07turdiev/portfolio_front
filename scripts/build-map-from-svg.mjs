@@ -60,7 +60,9 @@ const SVG_FILE_TO_REGION = {
 
 // ─── SVG parse yordamchi funksiyalari ─────────────────────────────────────
 function parseAttr(s, name) {
-  const re = new RegExp(`${name}="([^"]*)"`)
+  // Atribut nomi bo'sh joy yoki tag boshidan keyin kelishi shart
+  // (aks holda "aria-checked" ichidagi "d=" ham mos kelib qoladi)
+  const re = new RegExp(`(?:^|\\s)${name}="([^"]*)"`)
   const m = re.exec(s)
   return m ? m[1] : ''
 }
@@ -85,25 +87,89 @@ function getPaths(svgText) {
   return result
 }
 
-// Path "d" dan barcha (x,y) raqamli juftliklarni topadi, o'rtacha centroid qaytaradi.
-// Bu geometrik markaz emas, lekin marker uchun ko'pincha yaxshi tasvirlaydi.
+// SVG path'ning bounding box markazini hisoblaydi.
+// To'liq path parser: relative (kichik harflar) va absolute (katta harflar) komandalarni
+// hisobga oladi, joriy pozitsiyani kuzatib boradi. Centroid = (min+max)/2 (bbox center).
 function pathCentroid(d) {
-  // Komandalar (M L C ...) chiqarib tashlanadi, faqat raqamlar qoladi
-  const nums = d
-    .replace(/[a-zA-Z]/g, ' ')
-    .split(/[\s,]+/)
-    .filter(Boolean)
-    .map(Number)
-    .filter((n) => Number.isFinite(n))
-  let sx = 0, sy = 0, n = 0
-  // Juft indekslar x, toq indekslar y
-  for (let i = 0; i + 1 < nums.length; i += 2) {
-    sx += nums[i]
-    sy += nums[i + 1]
-    n++
+  const re = /[a-zA-Z]|-?\d*\.?\d+(?:e[+-]?\d+)?/g
+  const tokens = []
+  let m
+  while ((m = re.exec(d)) !== null) tokens.push(m[0])
+
+  let cx = 0, cy = 0           // joriy pozitsiya
+  let sx = 0, sy = 0           // subpath boshlanish nuqtasi (Z uchun)
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
+
+  const bb = (x, y) => {
+    if (x < minX) minX = x
+    if (x > maxX) maxX = x
+    if (y < minY) minY = y
+    if (y > maxY) maxY = y
   }
-  if (n === 0) return null
-  return { x: sx / n, y: sy / n }
+
+  let i = 0
+  let cmd = null
+  while (i < tokens.length) {
+    const t = tokens[i]
+    if (/[a-zA-Z]/.test(t)) {
+      cmd = t
+      i++
+      continue
+    }
+    if (!cmd) { i++; continue }
+    const isAbs = cmd >= 'A' && cmd <= 'Z'
+    const c = cmd.toLowerCase()
+    const num = (k) => parseFloat(tokens[i + k])
+
+    switch (c) {
+      case 'm':
+      case 'l': {
+        const x = num(0), y = num(1)
+        if (isAbs) { cx = x; cy = y } else { cx += x; cy += y }
+        if (c === 'm') { sx = cx; sy = cy; cmd = isAbs ? 'L' : 'l' }
+        bb(cx, cy); i += 2; break
+      }
+      case 'h': {
+        const x = num(0)
+        if (isAbs) cx = x; else cx += x
+        bb(cx, cy); i += 1; break
+      }
+      case 'v': {
+        const y = num(0)
+        if (isAbs) cy = y; else cy += y
+        bb(cx, cy); i += 1; break
+      }
+      case 'c': {
+        const x = num(4), y = num(5)
+        if (isAbs) { cx = x; cy = y } else { cx += x; cy += y }
+        bb(cx, cy); i += 6; break
+      }
+      case 's':
+      case 'q': {
+        const x = num(2), y = num(3)
+        if (isAbs) { cx = x; cy = y } else { cx += x; cy += y }
+        bb(cx, cy); i += 4; break
+      }
+      case 't': {
+        const x = num(0), y = num(1)
+        if (isAbs) { cx = x; cy = y } else { cx += x; cy += y }
+        bb(cx, cy); i += 2; break
+      }
+      case 'a': {
+        const x = num(5), y = num(6)
+        if (isAbs) { cx = x; cy = y } else { cx += x; cy += y }
+        bb(cx, cy); i += 7; break
+      }
+      case 'z': {
+        cx = sx; cy = sy; break
+      }
+      default:
+        i++
+    }
+  }
+
+  if (minX === Infinity) return null
+  return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 }
 }
 
 // ─── 3 tilli tuman nomlari ───────────────────────────────────────────────
