@@ -21,7 +21,9 @@
     "title": "O'zbekiston Respublikasi",
     "back": "Umumiy xaritaga qaytish",
     "hint": "Tumanlarni ko'rish uchun viloyatni tanlang",
-    "noPeople": "Vakillar yo'q"
+    "noPeople": "Vakillar yo'q",
+    "male": "Erkak",
+    "female": "Ayol"
   },
   "regions": {
     "title": "Hududlar",

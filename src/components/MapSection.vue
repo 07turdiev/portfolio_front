@@ -336,18 +336,19 @@ function onDistrictChange(value) {
           ></span>
           <div class="min-w-0">
             <div class="text-[13px] font-bold text-brand-dark leading-tight">
-              {{ hover.name }}
+              {{ hover.name }}<template v-if="hover.type !== 'person'">:</template>
             </div>
-            <!-- Region/District: vakillar soni -->
+            <!-- Region/District: erkak/ayol vakillar soni -->
             <div
               v-if="hover.type !== 'person' && hover.total > 0"
-              class="mt-1 flex items-center gap-2 text-[11px]"
+              class="mt-1 text-[11px] leading-snug"
             >
-              <span class="font-bold text-brand-primary">
-                {{ hover.total }} {{ t('directions.representativesShort') }}
-              </span>
-              <span v-if="hover.men" class="text-blue-600">♂ {{ hover.men }}</span>
-              <span v-if="hover.women" class="text-pink-600">♀ {{ hover.women }}</span>
+              <div class="text-brand-dark">
+                {{ t('map.male') }}: <span class="font-semibold">{{ hover.men || 0 }}</span>
+              </div>
+              <div class="text-brand-dark">
+                {{ t('map.female') }}: <span class="font-semibold">{{ hover.women || 0 }}</span>
+              </div>
             </div>
             <div
               v-else-if="hover.type !== 'person'"
