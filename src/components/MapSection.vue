@@ -263,6 +263,7 @@ function onDistrictChange(value) {
           class="region-group"
           @click="selectRegion(region.id)"
           @mouseenter="(e) => setHover(e, { type: 'region', name: t(`regions.names.${region.id}`), ...countByRegion(region.id) })"
+          @mouseleave="setHover(null, null)"
         >
           <path
             v-for="(p, i) in region.paths"
@@ -281,6 +282,7 @@ function onDistrictChange(value) {
             class="person-marker"
             @click.stop="openPerson(m.person)"
             @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
+            @mouseleave.stop="setHover(null, null)"
           />
         </g>
       </svg>
@@ -300,6 +302,7 @@ function onDistrictChange(value) {
           :class="{ 'is-selected': dist.id === selectedDistrictId }"
           @click="selectDistrict(dist.id)"
           @mouseenter="(e) => setHover(e, { type: 'district', name: dist.name, ...countByDistrict(dist.id) })"
+          @mouseleave="setHover(null, null)"
         />
         <g class="markers">
           <circle
@@ -311,6 +314,7 @@ function onDistrictChange(value) {
             class="person-marker"
             @click.stop="openPerson(m.person)"
             @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
+            @mouseleave.stop="setHover(null, null)"
           />
         </g>
       </svg>
