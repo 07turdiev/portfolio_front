@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:map": "node scripts/build-geo-map.mjs",
+    "build:map": "node scripts/build-map-from-svg.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

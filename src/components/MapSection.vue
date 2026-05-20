@@ -1,8 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { projectPoint } from '../utils/geoProjection'
-import { DISTRICT_GEO_CENTROIDS } from '../data/districtGeoCentroids'
 import { usePortfolioData } from '../composables/usePortfolioData'
 import { pickLang } from '../i18n'
 
@@ -22,6 +20,8 @@ const COUNTRY_VIEWBOX = computed(() => mapData.value?.COUNTRY_VIEWBOX || '0 0 94
 const projectedRegions = computed(() => mapData.value?.regions || [])
 const regionViewBoxes = computed(() => mapData.value?.regionViewBoxes || {})
 const districtsByRegion = computed(() => mapData.value?.districtsByRegion || {})
+const regionCentroids = computed(() => mapData.value?.regionCentroids || {})
+const districtCentroids = computed(() => mapData.value?.districtCentroids || {})
 
 const { t } = useI18n()
 const {
@@ -97,41 +97,34 @@ const peopleForMarkers = computed(() => {
   return list
 })
 
-// Marker pozitsiyasini hisoblaydi.
-// Avval backenddan kelgan districtLat/Lng ishlatiladi (aniq markaz).
-// Agar yo'q bo'lsa, DISTRICT_GEO_CENTROIDS dan slug bo'yicha topiladi.
-// Bir tumanda bir nechta vakil bo'lsa, ular markaz atrofida grid shaklida
-// (yonma-yon, ustma-ust chiqmasdan) joylashadi.
-function getDistrictCenter(p) {
-  if (p.districtLat != null && p.districtLng != null) {
-    return projectPoint(p.districtLat, p.districtLng)
-  }
-  const c = DISTRICT_GEO_CENTROIDS[p.districtId]
-  if (c) return projectPoint(c.lat, c.lng)
-  return null
-}
+// Marker joylashishi SVG koordinata tizimida.
+// - Country view: regionCentroids ishlatiladi (regions.svg space)
+// - Region view: districtCentroids ishlatiladi (her bir region SVG space)
+// Bir guruhdagi (region yoki district) vakillar grid shaklida joylashadi.
+function makeMarkers(list, mode) {
+  // mode: 'country' | 'region'
+  const centroids = mode === 'country' ? regionCentroids.value : districtCentroids.value
+  const grouper = mode === 'country' ? (p) => p.regionKey : (p) => p.districtId
 
-function makeMarkers(list) {
-  // 1) District bo'yicha guruhlash
-  const byDistrict = new Map()
+  // Grid qadami SVG hajmiga nisbatan o'lchanadi
+  const STEP = mode === 'country' ? 5 : 12
+
+  const byKey = new Map()
   for (const p of list) {
-    const center = getDistrictCenter(p)
+    const key = grouper(p)
+    const center = centroids[key]
     if (!center) continue
-    const key = p.districtId || `${p.districtLat},${p.districtLng}`
-    if (!byDistrict.has(key)) byDistrict.set(key, { center, people: [] })
-    byDistrict.get(key).people.push(p)
+    if (!byKey.has(key)) byKey.set(key, { center, people: [] })
+    byKey.get(key).people.push(p)
   }
 
-  // 2) Har guruh uchun grid joylashtirish (yonma-yon, ustma-ust emas)
-  const STEP = 3.5 // markerlar orasidagi masofa (SVG birligida)
   const out = []
-  for (const { center, people } of byDistrict.values()) {
+  for (const { center, people } of byKey.values()) {
     const n = people.length
     if (n === 1) {
       out.push({ person: people[0], x: center.x, y: center.y })
       continue
     }
-    // Kvadrat shakldagi grid: ceil(sqrt(n)) ustun va qator
     const cols = Math.ceil(Math.sqrt(n))
     const rows = Math.ceil(n / cols)
     const offsetX = ((cols - 1) * STEP) / 2
@@ -149,7 +142,7 @@ function makeMarkers(list) {
   return out
 }
 
-const countryMarkers = computed(() => makeMarkers(peopleForMarkers.value))
+const countryMarkers = computed(() => makeMarkers(peopleForMarkers.value, 'country'))
 
 const regionDistricts = computed(() => {
   if (!selectedRegionKey.value) return []
@@ -166,7 +159,8 @@ const regionMarkers = computed(() => {
   return makeMarkers(
     peopleForMarkers.value.filter(
       (p) => p.regionKey === selectedRegionKey.value
-    )
+    ),
+    'region'
   )
 })
 
@@ -284,7 +278,7 @@ function onDistrictChange(value) {
             :key="`m-${m.person.id}`"
             :cx="m.x"
             :cy="m.y"
-            r="3"
+            r="4"
             class="person-marker"
             @click.stop="openPerson(m.person)"
             @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
@@ -316,7 +310,7 @@ function onDistrictChange(value) {
             :key="`m-${m.person.id}`"
             :cx="m.x"
             :cy="m.y"
-            r="2.6"
+            r="8"
             class="person-marker"
             @click.stop="openPerson(m.person)"
             @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
