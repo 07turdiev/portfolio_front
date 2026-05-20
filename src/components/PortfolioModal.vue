@@ -150,8 +150,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           :title="t('portfolio.exportPdf')"
           class="no-print fixed top-5 right-[68px] z-[110] h-10 px-3.5 flex items-center gap-2 rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-colors disabled:opacity-60 disabled:cursor-wait"
         >
-          <svg v-if="!exporting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M12 10v6m0 0l-3-3m3 3l3-3M5 21h14a2 2 0 002-2v-4M3 12V5a2 2 0 012-2h7l5 5v2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          <svg v-if="!exporting" class="w-4 h-4" fill="currentColor" viewBox="0 0 3873 3873">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M3087.5,3646.1h-2302c-220.2,0-399.3-179.1-399.3-399.3V1096.6c0-20.6,16.7-37.3,37.3-37.3s37.3,16.7,37.3,37.3v2150.2c0,179,145.6,324.6,324.6,324.6h2302.1c179,0,324.7-145.6,324.7-324.6V626.2c0-179-145.7-324.6-324.7-324.6H1255.8c-20.6,0-37.3-16.7-37.3-37.3s16.7-37.3,37.3-37.3h1831.7c220.2,0,399.3,179.1,399.3,399.3v2620.6C3486.8,3467,3307.7,3646,3087.5,3646.1L3087.5,3646.1z"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M513.6,1059.3h704.9V354.4L513.6,1059.3z M1255.8,1133.9H423.5c-15.1,0-28.7-9.1-34.5-23c-5.8-14-2.6-30,8.1-40.7l832.3-832.3c10.7-10.7,26.7-13.9,40.7-8.1c14,5.8,23,19.4,23,34.5v832.3C1293.2,1117.2,1276.4,1133.9,1255.8,1133.9L1255.8,1133.9z"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M1569.8,1974.4l366.7,527.2l366.7-527.2h-217.4c-20.6,0-37.3-16.7-37.3-37.3V796.3h-224v1140.8c0,20.6-16.7,37.3-37.3,37.3L1569.8,1974.4L1569.8,1974.4z M1936.5,2604.3c-12.2,0-23.7-6-30.6-16l-438.1-629.9c-7.9-11.4-8.9-26.3-2.4-38.6c6.4-12.3,19.2-20,33.1-20H1750V759c0-20.6,16.7-37.3,37.3-37.3h298.6c20.6,0,37.3,16.7,37.3,37.3v1140.8h251.5c13.9,0,26.6,7.7,33.1,20c6.4,12.3,5.5,27.2-2.4,38.6l-438.1,629.9C1960.1,2598.4,1948.7,2604.3,1936.5,2604.3z"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M1080.8,3076.7h1711.5v-224H1080.8V3076.7z M2829.5,3151.4H1043.4c-20.6,0-37.3-16.7-37.3-37.3v-298.6c0-20.6,16.7-37.3,37.3-37.3h1786.1c20.6,0,37.3,16.7,37.3,37.3V3114C2866.9,3134.6,2850.1,3151.4,2829.5,3151.4z"/>
           </svg>
           <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="40 80" stroke-linecap="round"/>
