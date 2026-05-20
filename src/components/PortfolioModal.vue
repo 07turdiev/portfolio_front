@@ -7,73 +7,29 @@ const { t } = useI18n()
 const articleRef = ref(null)
 const exporting = ref(false)
 
-async function exportPdf() {
+function exportPdf() {
   if (!articleRef.value || exporting.value) return
   exporting.value = true
 
-  const original = articleRef.value
-  // Asl element'ning aniq nusxasini ekran ortida yaratamiz — foydalanuvchi hech narsa ko'rmaydi
-  const clone = original.cloneNode(true)
-  clone.style.position = 'fixed'
-  clone.style.top = '0'
-  clone.style.left = '-100000px'
-  clone.style.width = original.offsetWidth + 'px'
-  clone.style.maxHeight = 'none'
-  clone.style.height = 'auto'
-  clone.style.overflow = 'visible'
-  clone.style.transition = 'none'
-  document.body.appendChild(clone)
+  const originalTitle = document.title
+  const safe = (selectedPerson.value?.fullName || 'portfolio').replace(/[\/\\?%*:|"<>]/g, '-')
+  document.title = safe
 
-  // Clone ichidagi barcha scroll/max-height'larni ochish
-  for (const node of clone.querySelectorAll('*')) {
-    const cs = getComputedStyle(node)
-    if (
-      cs.maxHeight !== 'none' ||
-      ['auto', 'scroll', 'hidden'].includes(cs.overflow) ||
-      ['auto', 'scroll', 'hidden'].includes(cs.overflowY) ||
-      ['auto', 'scroll', 'hidden'].includes(cs.overflowX)
-    ) {
-      node.style.maxHeight = 'none'
-      node.style.height = 'auto'
-      node.style.overflow = 'visible'
-      node.style.overflowY = 'visible'
-      node.style.overflowX = 'visible'
-    }
-  }
-
-  // Brauzer layout qayta hisoblashi uchun kutish
-  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
-
-  try {
-    const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-      import('html2canvas'),
-      import('jspdf')
-    ])
-    const canvas = await html2canvas(clone, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      windowWidth: clone.scrollWidth,
-      windowHeight: clone.scrollHeight
-    })
-    const imgData = canvas.toDataURL('image/png')
-    const w = canvas.width
-    const h = canvas.height
-    const pdf = new jsPDF({
-      orientation: w > h ? 'landscape' : 'portrait',
-      unit: 'pt',
-      format: [w, h]
-    })
-    pdf.addImage(imgData, 'PNG', 0, 0, w, h)
-    const safe = (selectedPerson.value?.fullName || 'portfolio').replace(/[\/\\?%*:|"<>]/g, '-')
-    pdf.save(`${safe}.pdf`)
-  } catch (e) {
-    console.error('PDF eksport xatosi:', e)
-  } finally {
-    document.body.removeChild(clone)
+  const onAfter = () => {
+    document.title = originalTitle
     exporting.value = false
+    window.removeEventListener('afterprint', onAfter)
   }
+  window.addEventListener('afterprint', onAfter)
+
+  requestAnimationFrame(() => {
+    try {
+      window.print()
+    } catch (e) {
+      console.error('PDF eksport xatosi:', e)
+      onAfter()
+    }
+  })
 }
 const {
   selectedPerson,
@@ -180,7 +136,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
     >
       <div
         v-if="person"
-        class="fixed inset-0 z-[100] bg-brand-dark/70 backdrop-blur-sm flex items-center justify-center p-3 lg:px-20"
+        class="portfolio-modal-overlay fixed inset-0 z-[100] bg-brand-dark/70 backdrop-blur-sm flex items-center justify-center p-3 lg:px-20"
         @click.self="closePerson"
       >
         <!-- PDF eksport -->
@@ -189,7 +145,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           @click="exportPdf"
           :disabled="exporting"
           :title="t('portfolio.exportPdf')"
-          class="fixed top-5 right-[68px] z-[110] h-10 px-3.5 flex items-center gap-2 rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-colors disabled:opacity-60 disabled:cursor-wait"
+          class="no-print fixed top-5 right-[68px] z-[110] h-10 px-3.5 flex items-center gap-2 rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-colors disabled:opacity-60 disabled:cursor-wait"
         >
           <svg v-if="!exporting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path d="M12 10v6m0 0l-3-3m3 3l3-3M5 21h14a2 2 0 002-2v-4M3 12V5a2 2 0 012-2h7l5 5v2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -204,7 +160,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
         <button
           type="button"
           @click="closePerson"
-          class="fixed top-5 right-5 z-[110] w-10 h-10 flex items-center justify-center rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-colors"
+          class="no-print fixed top-5 right-5 z-[110] w-10 h-10 flex items-center justify-center rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-colors"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -221,7 +177,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           type="button"
           @click="goToPrevPerson"
           :disabled="!hasPrevPerson"
-          class="fixed left-3 lg:left-6 top-1/2 -translate-y-1/2 z-[110] w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          class="no-print fixed left-3 lg:left-6 top-1/2 -translate-y-1/2 z-[110] w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -238,7 +194,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           type="button"
           @click="goToNextPerson"
           :disabled="!hasNextPerson"
-          class="fixed right-3 lg:right-6 top-1/2 -translate-y-1/2 z-[110] w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          class="no-print fixed right-3 lg:right-6 top-1/2 -translate-y-1/2 z-[110] w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center rounded-full bg-white/95 text-brand-dark shadow-lg hover:bg-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -252,7 +208,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
 
         <!-- Page counter -->
         <div
-          class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-white/95 text-brand-dark text-sm font-semibold px-4 py-1.5 rounded-full shadow-lg"
+          class="no-print fixed bottom-4 left-1/2 -translate-x-1/2 z-[110] bg-white/95 text-brand-dark text-sm font-semibold px-4 py-1.5 rounded-full shadow-lg"
         >
           {{ selectedPersonIndex + 1 }} / {{ filteredPeople.length }}
         </div>
@@ -270,7 +226,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           <article
             ref="articleRef"
             :key="person.id"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300"
+            class="portfolio-print-root bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300"
             :style="isDeceased ? { filter: 'grayscale(100%)', WebkitFilter: 'grayscale(100%)' } : {}"
           >
             <!-- Compact hero -->
@@ -564,3 +520,66 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
     </Transition>
   </Teleport>
 </template>
+
+<style>
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* Asosiy ilovani yashirish — faqat modal ko'rinadi */
+  #app {
+    display: none !important;
+  }
+  /* Modal fonini olib tashlash */
+  .portfolio-modal-overlay {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    display: block !important;
+    z-index: auto !important;
+  }
+  /* Modal asosiy konteyneri — to'liq sahifa */
+  .portfolio-print-root {
+    position: static !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    transition: none !important;
+  }
+  /* Tugmalar, raqam koʻrsatkichi va boshqa interaktiv elementlar yashiriladi */
+  .no-print {
+    display: none !important;
+  }
+  /* Ichki scrollable bo'limlarni to'liq ochish */
+  .portfolio-print-root .custom-scrollbar,
+  .portfolio-print-root [class*="max-h-"],
+  .portfolio-print-root [class*="overflow-"] {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  /* Ranglarni saqlash (browser default ravishda ba'zi ranglarni olib tashlaydi) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Bo'limlar sahifalar orasida bo'linmasligi uchun */
+  .portfolio-print-root section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+</style>
