@@ -149,3 +149,16 @@ export async function fetchAwardTaxonomy() {
 export async function fetchAwards() {
   return fetchAwardTaxonomy()
 }
+
+// ─── Sahifa pastidagi info kartochkalari ────────────────────────────────
+
+export async function fetchInfoCards() {
+  const { data } = await http.get('/api/info-cards')
+  return (data.results || []).map((c) => ({
+    id: c.id,
+    title: c.title,   // {uz_latn, uz_cyrl, ru}
+    body: c.body,     // {uz_latn, uz_cyrl, ru}
+    icon: c.icon || null,
+    order: c.order,
+  }))
+}

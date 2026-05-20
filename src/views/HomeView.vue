@@ -6,6 +6,7 @@ import MapSection from '../components/MapSection.vue'
 import PeopleList from '../components/PeopleList.vue'
 import BirthdayCalendar from '../components/BirthdayCalendar.vue'
 import AwardsSection from '../components/AwardsSection.vue'
+import InfoCardsSection from '../components/InfoCardsSection.vue'
 import MainFooter from '../components/MainFooter.vue'
 import PortfolioModal from '../components/PortfolioModal.vue'
 import { usePortfolioData } from '../composables/usePortfolioData'
@@ -33,6 +34,8 @@ onMounted(load)
     <BirthdayCalendar />
 
     <AwardsSection />
+
+    <InfoCardsSection />
   </main>
 
   <MainFooter />
