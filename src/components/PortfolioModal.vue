@@ -92,13 +92,13 @@ const isDeceased = computed(() => person.value?.work?.healthKey === 'deceased')
 
 // Sog'lig'i bloki uchun fon va aksent rangi
 const HEALTH_HEADER_CLASS = {
-  good:     { bg: 'bg-green-50',  bar: 'bg-green-600',  text: 'text-green-800' },
-  average:  { bg: 'bg-yellow-50', bar: 'bg-yellow-600', text: 'text-yellow-800' },
-  poor:     { bg: 'bg-red-50',    bar: 'bg-red-600',    text: 'text-red-800' },
-  deceased: { bg: 'bg-gray-100',  bar: 'bg-gray-500',   text: 'text-gray-700' }
+  good:     { bg: 'bg-green-50',  border: 'border-green-600',  text: 'text-green-800' },
+  average:  { bg: 'bg-yellow-50', border: 'border-yellow-600', text: 'text-yellow-800' },
+  poor:     { bg: 'bg-red-50',    border: 'border-red-600',    text: 'text-red-800' },
+  deceased: { bg: 'bg-gray-100',  border: 'border-gray-500',   text: 'text-gray-700' }
 }
 function healthClasses(key) {
-  return HEALTH_HEADER_CLASS[key] || { bg: 'bg-gray-50', bar: 'bg-gray-400', text: 'text-gray-700' }
+  return HEALTH_HEADER_CLASS[key] || { bg: 'bg-gray-50', border: 'border-gray-400', text: 'text-gray-700' }
 }
 
 function placeLabel(districtName, regionKey) {
@@ -331,11 +331,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               <!-- Column 1 -->
               <div class="flex flex-col gap-4">
                 <section class="rounded-lg border border-gray-200 overflow-hidden">
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
-                    <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-4"
-                    >
+                  <header class="px-4 py-2.5 bg-[#eef3f9] border-l-[3px] border-[#5b87b3]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#3f6286]">
                       {{ t('portfolio.personal') }}
                     </h3>
                   </header>
@@ -383,11 +380,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   v-if="person.family.maritalStatus && person.family.maritalStatus.trim()"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
-                    <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-4"
-                    >
+                  <header class="px-4 py-2.5 bg-[#eef3f9] border-l-[3px] border-[#5b87b3]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#3f6286]">
                       {{ t('portfolio.familyInfo') }}
                     </h3>
                   </header>
@@ -405,11 +399,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   v-if="person.family.members && person.family.members.length"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
-                    <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-4"
-                    >
+                  <header class="px-4 py-2.5 bg-[#eef3f9] border-l-[3px] border-[#5b87b3]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#3f6286]">
                       {{ t('portfolio.familyMembers') }}
                     </h3>
                   </header>
@@ -446,11 +437,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   v-if="educationRows.length"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
-                    <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-4"
-                    >
+                  <header class="px-4 py-2.5 bg-[#eef3e9] border-l-[3px] border-[#7d9b6e]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
                       {{ t('portfolio.education') }}
                     </h3>
                   </header>
@@ -470,11 +458,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   v-if="workRows.length"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
-                    <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                    <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-4"
-                    >
+                  <header class="px-4 py-2.5 bg-[#eef3e9] border-l-[3px] border-[#7d9b6e]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
                       {{ t('portfolio.work') }}
                     </h3>
                   </header>
@@ -496,13 +481,12 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   class="rounded-lg border overflow-hidden"
                   :class="[healthClasses(person.work.healthKey).bg, 'border-gray-200']"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5">
-                    <span
-                      class="w-1 h-4 rounded-full"
-                      :class="healthClasses(person.work.healthKey).bar"
-                    ></span>
+                  <header
+                    class="px-4 py-2.5 border-l-[3px]"
+                    :class="healthClasses(person.work.healthKey).border"
+                  >
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider leading-4"
+                      class="text-xs font-bold uppercase tracking-wider"
                       :class="healthClasses(person.work.healthKey).text"
                     >
                       {{ t('portfolio.health') }}: {{ person.work.health }}
@@ -518,9 +502,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   v-if="person.achievements && person.achievements.length"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
-                    <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-4">
+                  <header class="px-4 py-2.5 bg-[#eef3e9] border-l-[3px] border-[#7d9b6e]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
                       {{ t('portfolio.achievements') }}
                     </h3>
                   </header>
@@ -545,9 +528,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   v-if="person.activity.description && person.activity.description.trim()"
                   class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-grow min-h-[180px] max-h-[400px]"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4] shrink-0">
-                    <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f] leading-4">
+                  <header class="px-4 py-2.5 bg-[#fbefe4] border-l-[3px] border-[#e0935f] shrink-0">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f]">
                       {{ t('portfolio.description') }}
                     </h3>
                   </header>
@@ -563,9 +545,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   v-if="person.activity.stateEvents && person.activity.stateEvents.trim()"
                   class="rounded-lg border border-gray-200 overflow-hidden"
                 >
-                  <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fef3e2]">
-                    <span class="w-1 h-4 rounded-full bg-[#c98135]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25] leading-4">
+                  <header class="px-4 py-2.5 bg-[#fef3e2] border-l-[3px] border-[#c98135]">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25]">
                       {{ t('portfolio.stateEvents') }}
                     </h3>
                   </header>
