@@ -9,6 +9,8 @@ import { fileURLToPath } from 'url'
 const here = dirname(fileURLToPath(import.meta.url))
 const GEOJSON_PATH = join(here, '../../data/geojson/uzbekistan.geojson')
 const OUT_JSON = join(here, '../public/data/projectedMap.json')
+// Tuman nomlari (3 til) — backenddagi rasmiy nomlar
+const DISTRICT_NAMES_PATH = join(here, '../../portfolio_back/core/data/district_names.json')
 
 // ───────── Mercator projection (must match src/utils/geoProjection.js) ─────────
 const DEG2RAD = Math.PI / 180
@@ -192,6 +194,20 @@ function getRegionFromSvgId(svgId) {
   return map[p] || null
 }
 
+// ───────── 3 tilli tuman nomlari (backend district_names.json) ─────────
+// Format: { "1703209": { slug: "an-boz", uz_latn: "Bo'ston tumani", uz_cyrl: "Бўстон тумани", ru: "Бозский район" }, ... }
+// Slug — svgId bilan bir xil ("an-boz" = svgId)
+let districtNamesBySlug = {}
+try {
+  const districtNames = JSON.parse(readFileSync(DISTRICT_NAMES_PATH, 'utf-8'))
+  for (const v of Object.values(districtNames)) {
+    if (v?.slug) districtNamesBySlug[v.slug] = v
+  }
+  console.log(`Loaded ${Object.keys(districtNamesBySlug).length} district names (3-lang)`)
+} catch (e) {
+  console.warn(`District names JSON yo'q (${DISTRICT_NAMES_PATH}); ingliz nomlardan foydalanamiz`)
+}
+
 // ───────── Build ─────────
 console.log('Reading GeoJSON...')
 const geoJsonRaw = JSON.parse(readFileSync(GEOJSON_PATH, 'utf-8'))
@@ -221,11 +237,18 @@ const districtsByRegion = {}
 const regionViewBoxes = {}
 for (const [regionId, feats] of Object.entries(featuresByRegion)) {
   regionViewBoxes[regionId] = computeViewBox(feats)
-  districtsByRegion[regionId] = feats.map((f) => ({
-    id: f.svgId,
-    name: f.shapeName,
-    svgPath: f.svgPath
-  }))
+  districtsByRegion[regionId] = feats.map((f) => {
+    const localized = districtNamesBySlug[f.svgId]
+    // name = 3 tilli obyekt. Agar topilmasa, fallback sifatida ingliz shapeName
+    const name = localized
+      ? { uz_latn: localized.uz_latn, uz_cyrl: localized.uz_cyrl, ru: localized.ru }
+      : { uz_latn: f.shapeName, uz_cyrl: f.shapeName, ru: f.shapeName }
+    return {
+      id: f.svgId,
+      name,
+      svgPath: f.svgPath
+    }
+  })
 }
 
 const regions = Object.entries(featuresByRegion).map(([regionId, feats]) => ({

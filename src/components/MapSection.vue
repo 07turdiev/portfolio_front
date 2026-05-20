@@ -4,6 +4,12 @@ import { useI18n } from 'vue-i18n'
 import { projectPoint } from '../utils/geoProjection'
 import { DISTRICT_GEO_CENTROIDS } from '../data/districtGeoCentroids'
 import { usePortfolioData } from '../composables/usePortfolioData'
+import { pickLang } from '../i18n'
+
+// Tuman nomi 3 tilli obyekt ({uz_latn, uz_cyrl, ru}) yoki string bo'lishi mumkin
+function localizedName(name) {
+  return typeof name === 'string' ? name : pickLang(name)
+}
 
 // Katta xarita ma'lumotlari — bundle'ga kirmaydi, runtime'da yuklanadi
 const mapData = ref(null)
@@ -224,7 +230,7 @@ function onDistrictChange(value) {
         >
           <option value="">{{ t('filter.allDistricts') }}</option>
           <option v-for="d in districtOptions" :key="d.id" :value="d.id">
-            {{ d.name }}
+            {{ localizedName(d.name) }}
           </option>
         </select>
         <svg
@@ -301,7 +307,7 @@ function onDistrictChange(value) {
           class="region-path"
           :class="{ 'is-selected': dist.id === selectedDistrictId }"
           @click="selectDistrict(dist.id)"
-          @mouseenter="(e) => setHover(e, { type: 'district', name: dist.name, ...countByDistrict(dist.id) })"
+          @mouseenter="(e) => setHover(e, { type: 'district', name: localizedName(dist.name), ...countByDistrict(dist.id) })"
           @mouseleave="setHover(null, null)"
         />
         <g class="markers">
