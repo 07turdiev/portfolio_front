@@ -289,7 +289,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </template>
                 </h2>
                 <div
-                  class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-[13px] text-white/90"
+                  class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-[13px] leading-5 text-white/90"
                 >
                   <span>{{ t(`directions.${person.directionKey}`) }}</span>
                   <span class="flex items-center gap-1.5">
@@ -334,7 +334,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-none"
+                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-4"
                     >
                       {{ t('portfolio.personal') }}
                     </h3>
@@ -386,7 +386,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-none"
+                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-4"
                     >
                       {{ t('portfolio.familyInfo') }}
                     </h3>
@@ -408,7 +408,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3f9]">
                     <span class="w-1 h-4 rounded-full bg-[#5b87b3]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-none"
+                      class="text-xs font-bold uppercase tracking-wider text-[#3f6286] leading-4"
                     >
                       {{ t('portfolio.familyMembers') }}
                     </h3>
@@ -449,7 +449,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-none"
+                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-4"
                     >
                       {{ t('portfolio.education') }}
                     </h3>
@@ -473,7 +473,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-none"
+                      class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-4"
                     >
                       {{ t('portfolio.work') }}
                     </h3>
@@ -502,7 +502,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       :class="healthClasses(person.work.healthKey).bar"
                     ></span>
                     <h3
-                      class="text-xs font-bold uppercase tracking-wider leading-none"
+                      class="text-xs font-bold uppercase tracking-wider leading-4"
                       :class="healthClasses(person.work.healthKey).text"
                     >
                       {{ t('portfolio.health') }}: {{ person.work.health }}
@@ -520,7 +520,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#eef3e9]">
                     <span class="w-1 h-4 rounded-full bg-[#7d9b6e]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-none">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46] leading-4">
                       {{ t('portfolio.achievements') }}
                     </h3>
                   </header>
@@ -547,7 +547,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fbefe4] shrink-0">
                     <span class="w-1 h-4 rounded-full bg-[#e0935f]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f] leading-none">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f] leading-4">
                       {{ t('portfolio.description') }}
                     </h3>
                   </header>
@@ -565,7 +565,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 >
                   <header class="flex items-center gap-2 px-4 py-2.5 bg-[#fef3e2]">
                     <span class="w-1 h-4 rounded-full bg-[#c98135]"></span>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25] leading-none">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25] leading-4">
                       {{ t('portfolio.stateEvents') }}
                     </h3>
                   </header>
