@@ -1,35 +1,38 @@
 <script setup>
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import axios from 'axios'
 import { usePortfolioData } from '../composables/usePortfolioData'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const articleRef = ref(null)
 const exporting = ref(false)
 
-function exportPdf() {
-  if (!articleRef.value || exporting.value) return
+async function exportPdf() {
+  if (exporting.value || !selectedPerson.value) return
   exporting.value = true
-
-  const originalTitle = document.title
-  const safe = (selectedPerson.value?.fullName || 'portfolio').replace(/[\/\\?%*:|"<>]/g, '-')
-  document.title = safe
-
-  const onAfter = () => {
-    document.title = originalTitle
+  try {
+    // Backenddan WeasyPrint orqali tayyor PDF olamiz
+    const lang = locale.value.replace('-', '_') // uz-latn → uz_latn
+    const res = await axios.get(
+      `/api/people/${selectedPerson.value.id}/pdf`,
+      { params: { lang }, responseType: 'blob' }
+    )
+    const blob = new Blob([res.data], { type: 'application/pdf' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    const safe = (selectedPerson.value?.fullName || 'portfolio').replace(/[\/\\?%*:|"<>]/g, '-')
+    a.download = `${safe}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  } catch (e) {
+    console.error('PDF eksport xatosi:', e)
+  } finally {
     exporting.value = false
-    window.removeEventListener('afterprint', onAfter)
   }
-  window.addEventListener('afterprint', onAfter)
-
-  requestAnimationFrame(() => {
-    try {
-      window.print()
-    } catch (e) {
-      console.error('PDF eksport xatosi:', e)
-      onAfter()
-    }
-  })
 }
 const {
   selectedPerson,
@@ -520,66 +523,3 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
     </Transition>
   </Teleport>
 </template>
-
-<style>
-@media print {
-  @page {
-    size: A4 landscape;
-    margin: 8mm;
-  }
-  html,
-  body {
-    background: #ffffff !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  /* Asosiy ilovani yashirish — faqat modal ko'rinadi */
-  #app {
-    display: none !important;
-  }
-  /* Modal fonini olib tashlash */
-  .portfolio-modal-overlay {
-    position: static !important;
-    inset: auto !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    padding: 0 !important;
-    display: block !important;
-    z-index: auto !important;
-  }
-  /* Modal asosiy konteyneri — to'liq sahifa */
-  .portfolio-print-root {
-    position: static !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: none !important;
-    height: auto !important;
-    overflow: visible !important;
-    transition: none !important;
-  }
-  /* Tugmalar, raqam koʻrsatkichi va boshqa interaktiv elementlar yashiriladi */
-  .no-print {
-    display: none !important;
-  }
-  /* Ichki scrollable bo'limlarni to'liq ochish */
-  .portfolio-print-root .custom-scrollbar,
-  .portfolio-print-root [class*="max-h-"],
-  .portfolio-print-root [class*="overflow-"] {
-    max-height: none !important;
-    overflow: visible !important;
-  }
-  /* Ranglarni saqlash (browser default ravishda ba'zi ranglarni olib tashlaydi) */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  /* Bo'limlar sahifalar orasida bo'linmasligi uchun */
-  .portfolio-print-root section {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-}
-</style>
