@@ -81,7 +81,10 @@ function computeViewBox(features, pad = PADDING) {
   return `${(minX - effectivePad).toFixed(1)} ${(minY - effectivePad).toFixed(1)} ${(maxX - minX + effectivePad * 2).toFixed(1)} ${(maxY - minY + effectivePad * 2).toFixed(1)}`
 }
 
-// ───────── Shape → SVG ID mapping (from data/geoJsonData.js) ─────────
+// ───────── Shape → SVG ID mapping (from data/geoJsonData.js — single source of truth) ─────────
+// IMPORTANT: keep this aligned with d:/Sites/Portfolio/data/geoJsonData.js and the
+// backend's district_names.json slugs. Mis-aligned svgIds cause silent localization
+// fallback to English shapeNames in MapSection.vue.
 const SHAPE_TO_SVG = {
   // Andijon
   'Altinkul': 'an-olt', 'Andijan': 'an-and', 'Balikchi': 'an-baliq',
@@ -149,30 +152,30 @@ const SHAPE_TO_SVG = {
   'Akkurgan': 'tosh-oqqr', 'Akhangaran': 'tosh-axan', 'Bekabad': 'tosh-bek',
   'Bostanlik': 'tosh-bos', 'Buka': 'tosh-buk', 'Kuyichirchik': 'tosh-quych',
   'Zangiata': 'tosh-zan', 'Yukarichirchik': 'tosh-yuqch',
-  'Parkent': 'tosh-par', 'Pskent': 'tosh-pis', 'Chinaz': 'tosh-chin',
-  'Urtachirchik': 'tosh-orch', 'Yangiyul': 'tosh-yan',
-  'Kibray': 'tosh-kib',
-  'Almalik city': 'tosh-olm-sh', 'Akhangaran city': 'tosh-axan-s',
-  'Angren city': 'tosh-ang-sh', 'Bekabad city': 'tosh-bek-sh',
-  'Chirchik city': 'tosh-chir-s', 'Yangiyul city': 'tosh-yan-sh',
-  'Nurafshon city': 'tosh-nur-sh',
-  // Fargona
+  'Kibray': 'tosh-qib', 'Parkent': 'tosh-par', 'Pskent': 'tosh-pis',
+  'Urtachirchik': 'tosh-ortch', 'Chinaz': 'tosh-chin', 'Yangiyul': 'tosh-yan',
+  'Tashkent': 'tosh-tosh', 'Nurafshon city': 'tosh-nursh',
+  'Almalik city': 'tosh-olmsh', 'Angren city': 'tosh-ang',
+  'Bekabad city': 'tosh-beksh', 'Akhangaran city': 'tosh-ohash',
+  'Chirchik city': 'tosh-chir', 'Yangiyul city': 'tosh-yang',
+  // Farg'ona
   'Altyarik': 'far-olt', 'Altiarik': 'far-olt',
   'Bagdad': 'far-bag', 'Beshariq': 'far-besh', 'Besharik': 'far-besh',
   'Buvayda': 'far-buv', 'Dangara': 'far-dan', 'Yazyavan': 'far-yoz',
-  'Kuva': 'far-quv', 'Kushtepa': 'far-qush', 'Rishtan': 'far-rish',
-  'Sokh': 'far-sox', 'Toshlak': 'far-tosh', 'Tashlak': 'far-tosh',
+  'Kuva': 'far-quv', 'Kushtepa': 'far-qosh',
+  'Rishton': 'far-rish', 'Rishtan': 'far-rish',
+  'Sokh': 'far-sux', 'Toshlak': 'far-tosh', 'Tashlak': 'far-tosh',
   'Uchkuprik': 'far-uchk',
-  'Uzbekistan': 'far-ozb', 'Fergana': 'far-far', 'Furkat': 'far-fur',
+  'Uzbekistan': 'far-uzb', 'Fergana': 'far-far', 'Furkat': 'far-fur',
   'Fergana city': 'far-far-sh', 'Kuvasay city': 'far-quv-sh',
-  'Margilan city': 'far-mar-sh', 'Kokand city': 'far-qoq-sh',
+  'Margilan city': 'far-margsh', 'Kokand city': 'far-qo`qsh',
   // Xorazm
   'Bagat': 'xor-bog', 'Gurlan': 'xor-gur', 'Gurlen': 'xor-gur',
-  'Khazarasp': 'xor-xaz', 'Khanka': 'xor-xon', 'Khiva': 'xor-xiv',
-  'Kushkupir': 'xor-qush', 'Koshkupir': 'xor-qush',
-  'Urgench': 'xor-urg', 'Shavat': 'xor-shav',
+  'Khazarasp': 'xor-xaz', 'Khanka': 'xor-xan', 'Khiva': 'xor-xiv',
+  'Kushkupir': 'xor-qosh', 'Koshkupir': 'xor-qosh',
+  'Urgench': 'xor-urg', 'Shavat': 'xor-shov',
   'Yangiarik': 'xor-yan', 'Yangibazar': 'xor-yangib',
-  'Tuprokkala': 'xor-tup',
+  'Tuprokkala': 'xor-tuproq',
   'Urgench city': 'xor-urg-sh', 'Khiva city': 'xor-xiv-sh',
   // Qoraqalpog'iston
   'Amudarya': 'qr-amu', 'Beruniy': 'qr-ber', 'Buzatau': 'qr-buz',
