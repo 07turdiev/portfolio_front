@@ -244,7 +244,7 @@ const nameOptions = computed(() => {
               :key="opt.key"
               :value="opt.key"
             >
-              {{ t(`awards.${opt.key}`) }}
+              {{ opt.name }}
             </option>
           </select>
           <svg
@@ -274,7 +274,7 @@ const nameOptions = computed(() => {
               :key="opt.key"
               :value="opt.key"
             >
-              {{ t(`filter.names.${opt.key}`) }}
+              {{ opt.name }}
             </option>
           </select>
           <svg
