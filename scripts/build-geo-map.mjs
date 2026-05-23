@@ -54,27 +54,46 @@ function geometryToPath(geometry) {
   return parts.join(' ')
 }
 
+function geometryBbox(geometry) {
+  const polygons =
+    geometry.type === 'MultiPolygon'
+      ? geometry.coordinates
+      : [geometry.coordinates]
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity
+  for (const polygon of polygons) {
+    for (const ring of polygon) {
+      for (const [lng, lat] of ring) {
+        const { x, y } = projectPoint(lat, lng)
+        if (x < minX) minX = x
+        if (x > maxX) maxX = x
+        if (y < minY) minY = y
+        if (y > maxY) maxY = y
+      }
+    }
+  }
+  return { minX, maxX, minY, maxY }
+}
+
+function geometryCentroid(geometry) {
+  const { minX, maxX, minY, maxY } = geometryBbox(geometry)
+  if (!isFinite(minX)) return null
+  return {
+    x: Math.round((minX + maxX) * 50) / 100,
+    y: Math.round((minY + maxY) * 50) / 100
+  }
+}
+
 function computeViewBox(features, pad = PADDING) {
   let minX = Infinity
   let maxX = -Infinity
   let minY = Infinity
   let maxY = -Infinity
   for (const f of features) {
-    const polygons =
-      f.geometry.type === 'MultiPolygon'
-        ? f.geometry.coordinates
-        : [f.geometry.coordinates]
-    for (const polygon of polygons) {
-      for (const ring of polygon) {
-        for (const [lng, lat] of ring) {
-          const { x, y } = projectPoint(lat, lng)
-          if (x < minX) minX = x
-          if (x > maxX) maxX = x
-          if (y < minY) minY = y
-          if (y > maxY) maxY = y
-        }
-      }
-    }
+    const bb = geometryBbox(f.geometry)
+    if (bb.minX < minX) minX = bb.minX
+    if (bb.maxX > maxX) maxX = bb.maxX
+    if (bb.minY < minY) minY = bb.minY
+    if (bb.maxY > maxY) maxY = bb.maxY
   }
   const shapeSize = Math.min(maxX - minX, maxY - minY)
   const effectivePad = Math.min(pad, Math.max(3, shapeSize * 0.3))
@@ -238,18 +257,38 @@ for (const feature of geoJsonRaw.features) {
 
 const districtsByRegion = {}
 const regionViewBoxes = {}
+const districtCentroids = {} // svgId → { x, y } in COUNTRY coord space
+const regionCentroids = {}   // regionId → { x, y } in COUNTRY coord space
 for (const [regionId, feats] of Object.entries(featuresByRegion)) {
   regionViewBoxes[regionId] = computeViewBox(feats)
+
+  // Region centroid = bbox center of all districts combined (country coord space)
+  let rMinX = Infinity, rMaxX = -Infinity, rMinY = Infinity, rMaxY = -Infinity
+  for (const f of feats) {
+    const bb = geometryBbox(f.geometry)
+    if (bb.minX < rMinX) rMinX = bb.minX
+    if (bb.maxX > rMaxX) rMaxX = bb.maxX
+    if (bb.minY < rMinY) rMinY = bb.minY
+    if (bb.maxY > rMaxY) rMaxY = bb.maxY
+  }
+  regionCentroids[regionId] = {
+    x: Math.round((rMinX + rMaxX) * 50) / 100,
+    y: Math.round((rMinY + rMaxY) * 50) / 100
+  }
+
   districtsByRegion[regionId] = feats.map((f) => {
     const localized = districtNamesBySlug[f.svgId]
     // name = 3 tilli obyekt. Agar topilmasa, fallback sifatida ingliz shapeName
     const name = localized
       ? { uz_latn: localized.uz_latn, uz_cyrl: localized.uz_cyrl, ru: localized.ru }
       : { uz_latn: f.shapeName, uz_cyrl: f.shapeName, ru: f.shapeName }
+    const centroid = geometryCentroid(f.geometry)
+    if (centroid) districtCentroids[f.svgId] = centroid
     return {
       id: f.svgId,
       name,
-      svgPath: f.svgPath
+      svgPath: f.svgPath,
+      centroid
     }
   })
 }
@@ -263,7 +302,9 @@ const output = {
   COUNTRY_VIEWBOX,
   regions,
   regionViewBoxes,
+  regionCentroids,
   districtsByRegion,
+  districtCentroids,
   districtNameMap
 }
 
@@ -274,7 +315,9 @@ writeFileSync(OUT_JSON, JSON.stringify({
   COUNTRY_VIEWBOX: output.COUNTRY_VIEWBOX,
   regions: output.regions,
   regionViewBoxes: output.regionViewBoxes,
-  districtsByRegion: output.districtsByRegion
+  regionCentroids: output.regionCentroids,
+  districtsByRegion: output.districtsByRegion,
+  districtCentroids: output.districtCentroids
 }))
 
 const totalDistricts = Object.values(featuresByRegion).reduce(

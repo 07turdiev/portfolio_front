@@ -23,6 +23,20 @@ const districtsByRegion = computed(() => mapData.value?.districtsByRegion || {})
 const regionCentroids = computed(() => mapData.value?.regionCentroids || {})
 const districtCentroids = computed(() => mapData.value?.districtCentroids || {})
 
+// Joriy viewBox kengligi — markerlar va grid qadami uchun proporsional o'lcham.
+// Country view (~940) va kichik viloyat (Surxondaryo ~139) o'rtasida 7x farq bor;
+// markerlar bir xil ekran o'lchamida qolishi uchun radius viewBox ga proporsional.
+function parseVbW(vb) {
+  const p = (vb || '').split(/\s+/).map(Number)
+  return p[2] || 940
+}
+const currentVbWidth = computed(() => {
+  if (!selectedRegionKey.value) return parseVbW(COUNTRY_VIEWBOX.value)
+  return parseVbW(regionViewBoxes.value[selectedRegionKey.value] || COUNTRY_VIEWBOX.value)
+})
+const markerRadius = computed(() => currentVbWidth.value * 0.005)
+const markerGridStep = computed(() => currentVbWidth.value * 0.015)
+
 const { t } = useI18n()
 const {
   selectedRegionKey,
@@ -97,22 +111,17 @@ const peopleForMarkers = computed(() => {
   return list
 })
 
-// Marker joylashishi SVG koordinata tizimida.
-// - Country view: regionCentroids ishlatiladi (regions.svg space)
-// - Region view: districtCentroids ishlatiladi (her bir region SVG space)
-// Bir guruhdagi (region yoki district) vakillar grid shaklida joylashadi.
-function makeMarkers(list, mode) {
-  // mode: 'country' | 'region'
-  const centroids = mode === 'country' ? regionCentroids.value : districtCentroids.value
-  const grouper = mode === 'country' ? (p) => p.regionKey : (p) => p.districtId
-
-  // Grid qadami SVG hajmiga nisbatan o'lchanadi
-  const STEP = mode === 'country' ? 5 : 12
+// Marker joylashishi har doim tuman markazida (bitta global Mercator koordinata
+// tizimi — regions, districts va markerlar bir xil fazoda yashaydi). Shu sababli
+// viloyatdan tumanga (yoki orqaga) o'tganda markerlar SVG da JOYIDA qoladi —
+// faqat viewBox kattalashadi/kichrayadi. Markazlar_map loyihasidagi yondashuv.
+function makeMarkers(list) {
+  const STEP = markerGridStep.value
 
   const byKey = new Map()
   for (const p of list) {
-    const key = grouper(p)
-    const center = centroids[key]
+    const key = p.districtId
+    const center = districtCentroids.value[key]
     if (!center) continue
     if (!byKey.has(key)) byKey.set(key, { center, people: [] })
     byKey.get(key).people.push(p)
@@ -142,7 +151,7 @@ function makeMarkers(list, mode) {
   return out
 }
 
-const countryMarkers = computed(() => makeMarkers(peopleForMarkers.value, 'country'))
+const countryMarkers = computed(() => makeMarkers(peopleForMarkers.value))
 
 const regionDistricts = computed(() => {
   if (!selectedRegionKey.value) return []
@@ -159,8 +168,7 @@ const regionMarkers = computed(() => {
   return makeMarkers(
     peopleForMarkers.value.filter(
       (p) => p.regionKey === selectedRegionKey.value
-    ),
-    'region'
+    )
   )
 })
 
@@ -278,7 +286,7 @@ function onDistrictChange(value) {
             :key="`m-${m.person.id}`"
             :cx="m.x"
             :cy="m.y"
-            r="4"
+            :r="markerRadius"
             class="person-marker"
             @click.stop="openPerson(m.person)"
             @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
@@ -310,7 +318,7 @@ function onDistrictChange(value) {
             :key="`m-${m.person.id}`"
             :cx="m.x"
             :cy="m.y"
-            r="8"
+            :r="markerRadius"
             class="person-marker"
             @click.stop="openPerson(m.person)"
             @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
