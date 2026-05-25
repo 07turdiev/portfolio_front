@@ -23,7 +23,10 @@
     "hint": "Tumanlarni ko'rish uchun viloyatni tanlang",
     "noPeople": "Vakillar yo'q",
     "male": "Erkak",
-    "female": "Ayol"
+    "female": "Ayol",
+    "modeAria": "Xarita rejimi",
+    "modeResidence": "Yashash manzili",
+    "modeBirth": "Tug'ilgan joyi"
   },
   "regions": {
     "title": "Hududlar",

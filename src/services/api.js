@@ -13,13 +13,6 @@ function formatDate(iso) {
   return `${d}.${m}.${y}`
 }
 
-function placeLabel(district, region) {
-  const dn = pickLang(district?.name)
-  const rn = pickLang(region?.name)
-  if (dn && rn) return `${dn}, ${rn}`
-  return dn || rn || ''
-}
-
 // ─── Yo'nalishlar ────────────────────────────────────────────────────────
 
 export async function fetchDirections() {
@@ -40,24 +33,64 @@ export async function fetchDirections() {
 
 // ─── Vakillar ────────────────────────────────────────────────────────────
 
+function placeFromStruct(block) {
+  // {mahalla, district, region} → tekis frontend representation.
+  // block null bo'lsa, hammasi bo'sh.
+  if (!block) {
+    return {
+      regionKey: '',
+      regionName: '',
+      districtId: '',
+      districtName: '',
+      districtLat: null,
+      districtLng: null,
+      mahallaName: '',
+      label: ''
+    }
+  }
+  const region = block.region || null
+  const district = block.district || null
+  const mahalla = block.mahalla || null
+  const districtName = pickLang(district?.name)
+  const regionName = pickLang(region?.name)
+  const mahallaName = pickLang(mahalla?.name)
+  const labelParts = [mahallaName, districtName, regionName].filter(Boolean)
+  return {
+    regionKey: region?.slug || '',
+    regionName,
+    districtId: district?.slug || district?.soato || '',
+    districtName,
+    districtLat: district?.lat ?? null,
+    districtLng: district?.lng ?? null,
+    mahallaName,
+    label: labelParts.join(', ')
+  }
+}
+
 function reshapePerson(p) {
-  const residence = p.residence || null
-  const region = residence?.region || null
-  const district = residence?.district || null
+  const residence = placeFromStruct(p.residence || null)
+  const birth = placeFromStruct(p.birth || null)
+  const residenceExtra = (p.residence?.extra || '').trim()
+  const residenceLabel = residenceExtra
+    ? `${residence.label}${residence.label ? ', ' : ''}${residenceExtra}`
+    : residence.label
   return {
     id: String(p.id),
     directionKey: p.directionKey,
-    // Frontend xarita uchun region/district kalitlari
-    regionKey: region?.slug || '',
-    districtId: district?.slug || district?.soato || '',
-    districtName: pickLang(district?.name),
-    // Backend yuborgan tuman markazi (lat/lng) — markerlar uchun
-    districtLat: district?.lat ?? null,
-    districtLng: district?.lng ?? null,
-    // Tug'ilgan hudud hozircha matn sifatida saqlanadi (struct emas)
-    birthRegionKey: '',
-    birthDistrictId: '',
-    birthDistrictName: '',
+    // Yashash manzili (default xarita uchun)
+    regionKey: residence.regionKey,
+    districtId: residence.districtId,
+    districtName: residence.districtName,
+    districtLat: residence.districtLat,
+    districtLng: residence.districtLng,
+    // Strukturali tug'ilgan joy (xarita rejimi va modal uchun)
+    birthRegionKey: birth.regionKey,
+    birthDistrictId: birth.districtId,
+    birthDistrictName: birth.districtName,
+    birthDistrictLat: birth.districtLat,
+    birthDistrictLng: birth.districtLng,
+    birth,           // {regionKey, regionName, districtId, districtName, mahallaName, label, ...}
+    residence,       // {regionKey, regionName, districtId, districtName, mahallaName, label, ...}
     gender: p.gender,
     fullName: p.fullName,
     personal: {
@@ -66,10 +99,8 @@ function reshapePerson(p) {
       middleName: pickLang(p.middleName),
       nationality: p.nationalityDisplay || '',
       birthDate: formatDate(p.birthDate),
-      birthPlace: pickLang(p.birthPlace),
-      residencePlace: residence
-        ? `${pickLang(residence.mahalla?.name)}, ${placeLabel(district, region)}`
-        : ''
+      birthPlace: birth.label,
+      residencePlace: residenceLabel
     },
     family: {
       maritalStatus: pickLang(p.maritalStatus),

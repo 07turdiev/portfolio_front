@@ -66,6 +66,18 @@ function placeLabel(districtName, regionKey) {
   return districtName ? `${districtName}, ${region}` : region
 }
 
+// Strukturali joydan to'liq label: "Mahalla, Tuman, Viloyat".
+// Viloyat nomi backenddagi versiya o'rniga (tarjimalangan slug-bog'liq)
+// frontend i18n'dan ham olinishi mumkin — slug bor bo'lsa, undan foydalanamiz.
+function blockLabel(block) {
+  if (!block) return ''
+  const regionName = block.regionKey
+    ? t(`regions.names.${block.regionKey}`)
+    : block.regionName
+  const parts = [block.mahallaName, block.districtName, regionName].filter(Boolean)
+  return parts.join(', ')
+}
+
 const personalRows = computed(() => {
   if (!person.value) return []
   const p = person.value.personal
@@ -81,12 +93,14 @@ const personalRows = computed(() => {
 const placeRows = computed(() => {
   if (!person.value) return []
   const p = person.value
+  const birthLabel = blockLabel(p.birth) || p.personal.birthPlace
+  const residenceLabel =
+    p.personal.residencePlace ||
+    blockLabel(p.residence) ||
+    placeLabel(p.districtName, p.regionKey)
   return [
-    { l: t('portfolio.birthPlace'), v: p.personal.birthPlace },
-    {
-      l: t('portfolio.residence'),
-      v: p.personal.residencePlace || placeLabel(p.districtName, p.regionKey)
-    }
+    { l: t('portfolio.birthPlace'), v: birthLabel },
+    { l: t('portfolio.residence'), v: residenceLabel }
   ].filter((r) => r.v && String(r.v).trim())
 })
 

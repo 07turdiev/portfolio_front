@@ -78,7 +78,9 @@ function moveHover(e) {
 }
 
 function countByRegion(regionId) {
-  const list = peopleForMarkers.value.filter((p) => p.regionKey === regionId)
+  const list = peopleForMarkers.value.filter(
+    (p) => regionKeyFor(p, mapMode.value) === regionId
+  )
   return {
     total: list.length,
     men: list.filter((p) => p.gender === 'male').length,
@@ -87,12 +89,25 @@ function countByRegion(regionId) {
 }
 
 function countByDistrict(districtId) {
-  const list = peopleForMarkers.value.filter((p) => p.districtId === districtId)
+  const list = peopleForMarkers.value.filter(
+    (p) => districtIdFor(p, mapMode.value) === districtId
+  )
   return {
     total: list.length,
     men: list.filter((p) => p.gender === 'male').length,
     women: list.filter((p) => p.gender === 'female').length
   }
+}
+
+// Xarita rejimi — yashash manzili (default) yoki tug'ilgan joyi
+const mapMode = ref('residence') // 'residence' | 'birth'
+
+function districtIdFor(person, mode) {
+  return mode === 'birth' ? person.birthDistrictId : person.districtId
+}
+
+function regionKeyFor(person, mode) {
+  return mode === 'birth' ? person.birthRegionKey : person.regionKey
 }
 
 const peopleForMarkers = computed(() => {
@@ -111,16 +126,24 @@ const peopleForMarkers = computed(() => {
   return list
 })
 
+// Tug'ilgan joy rejimida birth_mahalla bo'lmagan vakillarni alohida ro'yxatga.
+// Xaritada ko'rinmaydi, lekin "Joyi noma'lum" bo'limi uchun ishlatilishi mumkin.
+const peopleWithoutBirthPlace = computed(() => {
+  if (mapMode.value !== 'birth') return []
+  return peopleForMarkers.value.filter((p) => !p.birthDistrictId)
+})
+
 // Marker joylashishi har doim tuman markazida (bitta global Mercator koordinata
 // tizimi — regions, districts va markerlar bir xil fazoda yashaydi). Shu sababli
 // viloyatdan tumanga (yoki orqaga) o'tganda markerlar SVG da JOYIDA qoladi —
 // faqat viewBox kattalashadi/kichrayadi. Markazlar_map loyihasidagi yondashuv.
-function makeMarkers(list) {
+function makeMarkers(list, mode) {
   const STEP = markerGridStep.value
 
   const byKey = new Map()
   for (const p of list) {
-    const key = p.districtId
+    const key = districtIdFor(p, mode)
+    if (!key) continue
     const center = districtCentroids.value[key]
     if (!center) continue
     if (!byKey.has(key)) byKey.set(key, { center, people: [] })
@@ -129,6 +152,8 @@ function makeMarkers(list) {
 
   const out = []
   for (const { center, people } of byKey.values()) {
+    // Stabil tartib — har rejimda bir xil grid joyini berish uchun
+    people.sort((a, b) => Number(a.id) - Number(b.id))
     const n = people.length
     if (n === 1) {
       out.push({ person: people[0], x: center.x, y: center.y })
@@ -151,7 +176,9 @@ function makeMarkers(list) {
   return out
 }
 
-const countryMarkers = computed(() => makeMarkers(peopleForMarkers.value))
+const countryMarkers = computed(() =>
+  makeMarkers(peopleForMarkers.value, mapMode.value)
+)
 
 const regionDistricts = computed(() => {
   if (!selectedRegionKey.value) return []
@@ -167,10 +194,16 @@ const regionMarkers = computed(() => {
   if (!selectedRegionKey.value) return []
   return makeMarkers(
     peopleForMarkers.value.filter(
-      (p) => p.regionKey === selectedRegionKey.value
-    )
+      (p) => regionKeyFor(p, mapMode.value) === selectedRegionKey.value
+    ),
+    mapMode.value
   )
 })
+
+function setMapMode(mode) {
+  if (mode !== 'residence' && mode !== 'birth') return
+  mapMode.value = mode
+}
 
 const regionOptions = computed(() =>
   Object.keys(districtsByRegion.value)
@@ -196,6 +229,38 @@ function onDistrictChange(value) {
   <div
     class="lg:col-span-6 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col p-6 min-h-0"
   >
+    <!-- Map mode toggle: Yashash manzili / Tug'ilgan joyi -->
+    <div
+      class="inline-flex self-start bg-[#f0f4ff] rounded-lg p-1 mb-3 shrink-0"
+      role="tablist"
+      :aria-label="t('map.modeAria')"
+    >
+      <button
+        type="button"
+        role="tab"
+        :aria-selected="mapMode === 'residence'"
+        @click="setMapMode('residence')"
+        class="px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
+        :class="mapMode === 'residence'
+          ? 'bg-white text-brand-primary shadow-sm'
+          : 'text-brand-dark/70 hover:text-brand-dark'"
+      >
+        {{ t('map.modeResidence') }}
+      </button>
+      <button
+        type="button"
+        role="tab"
+        :aria-selected="mapMode === 'birth'"
+        @click="setMapMode('birth')"
+        class="px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
+        :class="mapMode === 'birth'
+          ? 'bg-white text-brand-primary shadow-sm'
+          : 'text-brand-dark/70 hover:text-brand-dark'"
+      >
+        {{ t('map.modeBirth') }}
+      </button>
+    </div>
+
     <!-- Filter header: region + district -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 shrink-0">
       <div class="relative">
@@ -281,17 +346,20 @@ function onDistrictChange(value) {
           />
         </g>
         <g class="markers">
-          <circle
+          <g
             v-for="m in countryMarkers"
             :key="`m-${m.person.id}`"
-            :cx="m.x"
-            :cy="m.y"
-            :r="markerRadius"
-            class="person-marker"
-            @click.stop="openPerson(m.person)"
-            @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
-            @mouseleave.stop="setHover(null, null)"
-          />
+            class="marker-group"
+            :transform="`translate(${m.x}, ${m.y})`"
+          >
+            <circle
+              :r="markerRadius"
+              class="person-marker"
+              @click.stop="openPerson(m.person)"
+              @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
+              @mouseleave.stop="setHover(null, null)"
+            />
+          </g>
         </g>
       </svg>
 
@@ -313,17 +381,20 @@ function onDistrictChange(value) {
           @mouseleave="setHover(null, null)"
         />
         <g class="markers">
-          <circle
+          <g
             v-for="m in regionMarkers"
             :key="`m-${m.person.id}`"
-            :cx="m.x"
-            :cy="m.y"
-            :r="markerRadius"
-            class="person-marker"
-            @click.stop="openPerson(m.person)"
-            @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
-            @mouseleave.stop="setHover(null, null)"
-          />
+            class="marker-group"
+            :transform="`translate(${m.x}, ${m.y})`"
+          >
+            <circle
+              :r="markerRadius"
+              class="person-marker"
+              @click.stop="openPerson(m.person)"
+              @mouseenter.stop="(e) => setHover(e, { type: 'person', name: m.person.fullName, sub: m.person.work?.position })"
+              @mouseleave.stop="setHover(null, null)"
+            />
+          </g>
         </g>
       </svg>
 
@@ -426,6 +497,11 @@ function onDistrictChange(value) {
   fill: #4775ff;
 }
 
+.marker-group {
+  /* Rejim almashtirilganda metkalar yangi pozitsiyaga silliq suriladi */
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .person-marker {
   fill: #4775ff;
   stroke: #ffffff;
@@ -437,5 +513,12 @@ function onDistrictChange(value) {
 
 .person-marker:hover {
   fill: #f59e0b;
+}
+
+/* Foydalanuvchi animatsiyalarni xohlamasa, hurmat qilamiz */
+@media (prefers-reduced-motion: reduce) {
+  .marker-group {
+    transition: none;
+  }
 }
 </style>
