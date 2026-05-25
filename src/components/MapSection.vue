@@ -229,40 +229,10 @@ function onDistrictChange(value) {
   <div
     class="lg:col-span-6 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col p-6 min-h-0"
   >
-    <!-- Map mode toggle: Yashash manzili / Tug'ilgan joyi -->
-    <div
-      class="inline-flex self-start bg-[#f0f4ff] rounded-lg p-1 mb-3 shrink-0"
-      role="tablist"
-      :aria-label="t('map.modeAria')"
-    >
-      <button
-        type="button"
-        role="tab"
-        :aria-selected="mapMode === 'residence'"
-        @click="setMapMode('residence')"
-        class="px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
-        :class="mapMode === 'residence'
-          ? 'bg-white text-brand-primary shadow-sm'
-          : 'text-brand-dark/70 hover:text-brand-dark'"
-      >
-        {{ t('map.modeResidence') }}
-      </button>
-      <button
-        type="button"
-        role="tab"
-        :aria-selected="mapMode === 'birth'"
-        @click="setMapMode('birth')"
-        class="px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
-        :class="mapMode === 'birth'
-          ? 'bg-white text-brand-primary shadow-sm'
-          : 'text-brand-dark/70 hover:text-brand-dark'"
-      >
-        {{ t('map.modeBirth') }}
-      </button>
-    </div>
-
-    <!-- Filter header: region + district -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 shrink-0">
+    <!-- Filter header: region + district + mode toggle (o'ngda) -->
+    <div class="flex flex-wrap items-stretch gap-2 mb-4 shrink-0">
+      <!-- Region + district selects: qolgan joyni teng bo'lib oladi -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1 min-w-[200px]">
       <div class="relative">
         <select
           :value="selectedRegionKey || ''"
@@ -313,6 +283,39 @@ function onDistrictChange(value) {
             stroke-width="2"
           />
         </svg>
+      </div>
+      </div>
+
+      <!-- Map mode toggle: Yashash manzili / Tug'ilgan joyi (o'ngda) -->
+      <div
+        class="inline-flex bg-[#f0f4ff] rounded-lg p-1 shrink-0"
+        role="tablist"
+        :aria-label="t('map.modeAria')"
+      >
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="mapMode === 'residence'"
+          @click="setMapMode('residence')"
+          class="px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
+          :class="mapMode === 'residence'
+            ? 'bg-white text-brand-primary shadow-sm'
+            : 'text-brand-dark/70 hover:text-brand-dark'"
+        >
+          {{ t('map.modeResidence') }}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          :aria-selected="mapMode === 'birth'"
+          @click="setMapMode('birth')"
+          class="px-3 py-1.5 text-xs font-semibold rounded-md transition-colors"
+          :class="mapMode === 'birth'
+            ? 'bg-white text-brand-primary shadow-sm'
+            : 'text-brand-dark/70 hover:text-brand-dark'"
+        >
+          {{ t('map.modeBirth') }}
+        </button>
       </div>
     </div>
 
