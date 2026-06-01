@@ -3,8 +3,8 @@ import uzLatn from './locales/uz-latn.json'
 import uzCyrl from './locales/uz-cyrl.json'
 import ru from './locales/ru.json'
 
-export const SUPPORTED_LOCALES = ['uz-latn', 'uz-cyrl', 'ru']
-const DEFAULT_LOCALE = 'uz-latn'
+export const SUPPORTED_LOCALES = ['uz-cyrl', 'uz-latn', 'ru']
+const DEFAULT_LOCALE = 'uz-cyrl'
 
 const saved = localStorage.getItem('locale')
 const initial = SUPPORTED_LOCALES.includes(saved) ? saved : DEFAULT_LOCALE
