@@ -60,24 +60,6 @@ function healthClasses(key) {
   return HEALTH_HEADER_CLASS[key] || { bg: 'bg-gray-50', border: 'border-gray-400', text: 'text-gray-700' }
 }
 
-function placeLabel(districtName, regionKey) {
-  if (!regionKey) return ''
-  const region = t(`regions.names.${regionKey}`)
-  return districtName ? `${districtName}, ${region}` : region
-}
-
-// Strukturali joydan to'liq label: "Mahalla, Tuman, Viloyat".
-// Viloyat nomi backenddagi versiya o'rniga (tarjimalangan slug-bog'liq)
-// frontend i18n'dan ham olinishi mumkin — slug bor bo'lsa, undan foydalanamiz.
-function blockLabel(block) {
-  if (!block) return ''
-  const regionName = block.regionKey
-    ? t(`regions.names.${block.regionKey}`)
-    : block.regionName
-  const parts = [block.mahallaName, block.districtName, regionName].filter(Boolean)
-  return parts.join(', ')
-}
-
 const personalRows = computed(() => {
   if (!person.value) return []
   const p = person.value.personal
@@ -90,18 +72,32 @@ const personalRows = computed(() => {
   ].filter((r) => r.v && String(r.v).trim())
 })
 
-const placeRows = computed(() => {
+// Bitta joy bloki (birth yoki residence) uchun batafsil satrlar yasash.
+// Viloyat → tuman → mahalla → manzil tartibida, bo'sh maydon yo'q.
+function detailsFromBlock(block, extra = '') {
+  if (!block) return []
+  const regionName = block.regionKey
+    ? t(`regions.names.${block.regionKey}`)
+    : block.regionName
+  const rows = [
+    { l: t('portfolio.regionLabel'), v: regionName },
+    { l: t('portfolio.districtLabel'), v: block.districtName },
+    { l: t('portfolio.mahallaLabel'), v: block.mahallaName }
+  ]
+  if (extra && extra.trim()) {
+    rows.push({ l: t('portfolio.addressLabel'), v: extra.trim() })
+  }
+  return rows.filter((r) => r.v && String(r.v).trim())
+}
+
+const birthDetails = computed(() => {
   if (!person.value) return []
-  const p = person.value
-  const birthLabel = blockLabel(p.birth) || p.personal.birthPlace
-  const residenceLabel =
-    p.personal.residencePlace ||
-    blockLabel(p.residence) ||
-    placeLabel(p.districtName, p.regionKey)
-  return [
-    { l: t('portfolio.birthPlace'), v: birthLabel },
-    { l: t('portfolio.residence'), v: residenceLabel }
-  ].filter((r) => r.v && String(r.v).trim())
+  return detailsFromBlock(person.value.birth)
+})
+
+const residenceDetails = computed(() => {
+  if (!person.value) return []
+  return detailsFromBlock(person.value.residence)
 })
 
 const educationRows = computed(() => {
@@ -335,20 +331,57 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                         </div>
                       </dl>
                     </div>
-                    <dl v-if="placeRows.length" class="mt-1">
+                    <!-- Tug'ilgan joyi (alohida batafsil bo'lim) -->
+                    <div
+                      v-if="birthDetails.length"
+                      class="mt-3 rounded-md border border-amber-200 overflow-hidden"
+                    >
                       <div
-                        v-for="row in placeRows"
-                        :key="row.l"
-                        class="flex items-start gap-2 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
+                        class="px-3 py-1.5 bg-amber-50 border-l-[3px] border-amber-500 text-[11px] font-bold uppercase tracking-wider text-amber-800"
                       >
-                        <dt class="w-2/5 text-brand-muted shrink-0">
-                          {{ row.l }}
-                        </dt>
-                        <dd class="w-3/5 font-medium text-brand-dark">
-                          {{ row.v }}
-                        </dd>
+                        {{ t('portfolio.birthPlace') }}
                       </div>
-                    </dl>
+                      <dl class="px-3 py-1.5">
+                        <div
+                          v-for="row in birthDetails"
+                          :key="`birth-${row.l}`"
+                          class="flex items-start gap-2 py-1 border-b border-amber-50 last:border-0 text-[13px]"
+                        >
+                          <dt class="w-2/5 text-brand-muted shrink-0">
+                            {{ row.l }}
+                          </dt>
+                          <dd class="w-3/5 font-medium text-brand-dark">
+                            {{ row.v }}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+
+                    <!-- Hozirgi yashash joyi (alohida batafsil bo'lim) -->
+                    <div
+                      v-if="residenceDetails.length"
+                      class="mt-2 rounded-md border border-blue-200 overflow-hidden"
+                    >
+                      <div
+                        class="px-3 py-1.5 bg-blue-50 border-l-[3px] border-brand-primary text-[11px] font-bold uppercase tracking-wider text-brand-primary"
+                      >
+                        {{ t('portfolio.residence') }}
+                      </div>
+                      <dl class="px-3 py-1.5">
+                        <div
+                          v-for="row in residenceDetails"
+                          :key="`res-${row.l}`"
+                          class="flex items-start gap-2 py-1 border-b border-blue-50 last:border-0 text-[13px]"
+                        >
+                          <dt class="w-2/5 text-brand-muted shrink-0">
+                            {{ row.l }}
+                          </dt>
+                          <dd class="w-3/5 font-medium text-brand-dark">
+                            {{ row.v }}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
                   </div>
                 </section>
 
