@@ -73,17 +73,22 @@ const personalRows = computed(() => {
 })
 
 // Bitta joy bloki (birth yoki residence) uchun batafsil satrlar yasash.
-// Viloyat → tuman → mahalla → manzil tartibida, bo'sh maydon yo'q.
+// Viloyat → tuman → manzil tartibida, bo'sh maydon yo'q.
+// Chet el (foreign) bo'lsa — bitta qo'lda kiritilgan manzil satri.
 function detailsFromBlock(block, extra = '') {
   if (!block) return []
-  const regionName = block.regionKey
-    ? t(`regions.names.${block.regionKey}`)
-    : block.regionName
-  const rows = [
-    { l: t('portfolio.regionLabel'), v: regionName },
-    { l: t('portfolio.districtLabel'), v: block.districtName },
-    { l: t('portfolio.mahallaLabel'), v: block.mahallaName }
-  ]
+  const rows = []
+  if (block.foreign) {
+    rows.push({ l: t('portfolio.addressLabel'), v: block.foreign })
+  } else {
+    const regionName = block.regionKey
+      ? t(`regions.names.${block.regionKey}`)
+      : block.regionName
+    rows.push(
+      { l: t('portfolio.regionLabel'), v: regionName },
+      { l: t('portfolio.districtLabel'), v: block.districtName }
+    )
+  }
   if (extra && extra.trim()) {
     rows.push({ l: t('portfolio.addressLabel'), v: extra.trim() })
   }

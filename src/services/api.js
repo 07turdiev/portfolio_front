@@ -34,27 +34,28 @@ export async function fetchDirections() {
 // ─── Vakillar ────────────────────────────────────────────────────────────
 
 function placeFromStruct(block) {
-  // {mahalla, district, region} → tekis frontend representation.
+  // {district, region} yoki {foreign} → tekis frontend representation.
   // block null bo'lsa, hammasi bo'sh.
-  if (!block) {
-    return {
-      regionKey: '',
-      regionName: '',
-      districtId: '',
-      districtName: '',
-      districtLat: null,
-      districtLng: null,
-      mahallaName: '',
-      label: ''
-    }
+  const empty = {
+    regionKey: '',
+    regionName: '',
+    districtId: '',
+    districtName: '',
+    districtLat: null,
+    districtLng: null,
+    foreign: '',
+    label: ''
+  }
+  if (!block) return empty
+  // Chet el — qo'lda kiritilgan joy (viloyat/tuman/koordinata yo'q)
+  if (block.foreign) {
+    return { ...empty, foreign: block.foreign, label: block.foreign }
   }
   const region = block.region || null
   const district = block.district || null
-  const mahalla = block.mahalla || null
   const districtName = pickLang(district?.name)
   const regionName = pickLang(region?.name)
-  const mahallaName = pickLang(mahalla?.name)
-  const labelParts = [mahallaName, districtName, regionName].filter(Boolean)
+  const labelParts = [districtName, regionName].filter(Boolean)
   return {
     regionKey: region?.slug || '',
     regionName,
@@ -62,7 +63,7 @@ function placeFromStruct(block) {
     districtName,
     districtLat: district?.lat ?? null,
     districtLng: district?.lng ?? null,
-    mahallaName,
+    foreign: '',
     label: labelParts.join(', ')
   }
 }
