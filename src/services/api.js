@@ -47,9 +47,11 @@ function placeFromStruct(block) {
     label: ''
   }
   if (!block) return empty
-  // Chet el — qo'lda kiritilgan joy (viloyat/tuman/koordinata yo'q)
+  // Chet el — qo'lda kiritilgan joy (viloyat/tuman/koordinata yo'q).
+  // pickLang orqali — lotin rejimida kirill matn translit qilinadi.
   if (block.foreign) {
-    return { ...empty, foreign: block.foreign, label: block.foreign }
+    const foreign = pickLang(block.foreign)
+    return { ...empty, foreign, label: foreign }
   }
   const region = block.region || null
   const district = block.district || null
@@ -75,6 +77,14 @@ function reshapePerson(p) {
   const residenceLabel = residenceExtra
     ? `${residence.label}${residence.label ? ', ' : ''}${residenceExtra}`
     : residence.label
+  // Ism-sharifni joriy tilga mos qismlardan yig'amiz — shunda lotin rejimida
+  // kirilldan transliteratsiya qilingan qiymatlar ishlatiladi (backend
+  // `fullName` xom kirill bo'lishi mumkin).
+  const lastName = pickLang(p.lastName)
+  const firstName = pickLang(p.firstName)
+  const middleName = pickLang(p.middleName)
+  const fullName =
+    [lastName, firstName, middleName].filter(Boolean).join(' ') || p.fullName
   return {
     id: String(p.id),
     directionKey: p.directionKey,
@@ -93,11 +103,11 @@ function reshapePerson(p) {
     birth,           // {regionKey, regionName, districtId, districtName, mahallaName, label, ...}
     residence,       // {regionKey, regionName, districtId, districtName, mahallaName, label, ...}
     gender: p.gender,
-    fullName: p.fullName,
+    fullName,
     personal: {
-      lastName: pickLang(p.lastName),
-      firstName: pickLang(p.firstName),
-      middleName: pickLang(p.middleName),
+      lastName,
+      firstName,
+      middleName,
       nationality: p.nationalityDisplay || '',
       birthDate: formatDate(p.birthDate),
       birthPlace: birth.label,

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { SUPPORTED_LOCALES, setLocale } from '../i18n'
+import { SELECTABLE_LOCALES, setLocale } from '../i18n'
 
 const { t, locale } = useI18n()
 
@@ -9,7 +9,7 @@ const open = ref(false)
 const root = ref(null)
 
 const options = computed(() =>
-  SUPPORTED_LOCALES.map((code) => ({
+  SELECTABLE_LOCALES.map((code) => ({
     code,
     label: t(`lang.${code.replace('-', '_')}`)
   }))
