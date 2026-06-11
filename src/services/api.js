@@ -70,7 +70,7 @@ function placeFromStruct(block) {
   }
 }
 
-function reshapePerson(p) {
+export function reshapePerson(p) {
   const residence = placeFromStruct(p.residence || null)
   const birth = placeFromStruct(p.birth || null)
   const residenceExtra = (p.residence?.extra || '').trim()
@@ -153,11 +153,15 @@ function reshapePerson(p) {
   }
 }
 
+// XOM API natijasini qaytaradi (har bir maydon {uz_latn, uz_cyrl, ru} dict).
+// Tilga moslash (reshapePerson) ataylab bu yerda QILINMAYDI — u joriy tilga
+// reaktiv bog'liq, shuning uchun iste'mol qatlamida (usePortfolioData) chaqiriladi.
+// Shu tufayli til almashtirilganda qayta yuklash shart emas.
 export async function fetchPeople(directionKey) {
   const { data } = await http.get('/api/people', {
     params: { direction: directionKey }
   })
-  return (data.results || []).map(reshapePerson)
+  return data.results || []
 }
 
 // ─── Tumanlar xaritasi (lokal SVG fayllar — backend emas) ────────────────

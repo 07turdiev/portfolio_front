@@ -50,15 +50,22 @@ const MONO = {
   ҳ: 'h', Ҳ: 'H'
 }
 
+// Natija keshi — bir xil qiymatlar (lavozimlar, viloyatlar, "Yo'q" va h.k.)
+// yuzlab vakilda takrorlanadi; kesh birinchi til almashtirishni tezlashtiradi.
+const _cyrLatCache = new Map()
+
 /** Uzbek kirill matnini lotin (2019) standartiga aylantiradi. */
 export function cyrToLat(text) {
   if (!text) return ''
+  const cached = _cyrLatCache.get(text)
+  if (cached !== undefined) return cached
   let out = ''
   for (const ch of String(text)) {
     if (DIGRAM[ch] !== undefined) out += DIGRAM[ch]
     else if (MONO[ch] !== undefined) out += MONO[ch]
     else out += ch
   }
+  _cyrLatCache.set(text, out)
   return out
 }
 
@@ -119,9 +126,14 @@ function normalizeApostrophes(text) {
   return text.replace(/[‘’ʹʻʼʽˊˋ`´′]/g, "'")
 }
 
+const _latCyrCache = new Map()
+
 /** Uzbek lotin matnini kirill yozuviga aylantiradi. */
 export function latinToCyrl(text) {
   if (!text) return text
+  const cached = _latCyrCache.get(text)
+  if (cached !== undefined) return cached
+  const original = text
   text = normalizeApostrophes(text)
 
   let result = ''
@@ -159,5 +171,6 @@ export function latinToCyrl(text) {
     }
   }
 
+  _latCyrCache.set(original, result)
   return result
 }

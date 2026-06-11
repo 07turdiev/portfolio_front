@@ -247,12 +247,12 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
           <article
             ref="articleRef"
             :key="person.id"
-            class="portfolio-print-root bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] overflow-hidden transition-[filter] duration-300"
+            class="portfolio-print-root bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[94vh] xl:h-[94vh] overflow-hidden flex flex-col transition-[filter] duration-300"
             :style="isDeceased ? { filter: 'grayscale(100%)', WebkitFilter: 'grayscale(100%)' } : {}"
           >
             <!-- Compact hero -->
             <div
-              class="bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4"
+              class="shrink-0 bg-gradient-to-r from-brand-dark to-brand-primary text-white px-6 md:px-8 py-4"
             >
               <div class="min-w-0">
                 <div
@@ -268,10 +268,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 <div
                   class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-[13px] leading-5 text-white/90"
                 >
-                  <span>{{ t(`directions.${person.directionKey}`) }}</span>
-                  <span class="flex items-center gap-1.5">
+                  <span class="break-words min-w-0">{{ t(`directions.${person.directionKey}`) }}</span>
+                  <span class="flex items-center gap-1.5 min-w-0 break-words">
                     <svg
-                      class="w-4 h-4"
+                      class="w-4 h-4 shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -295,7 +295,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                     </template>
                   </span>
                   <span
-                    class="bg-white/15 px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    class="bg-white/15 px-2.5 py-0.5 rounded-full text-xs font-medium min-w-0 max-w-full break-words"
                   >
                     {{ person.work.position }}
                   </span>
@@ -303,11 +303,17 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
               </div>
             </div>
 
-            <!-- 3 columns filling the landscape width -->
-            <div class="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              <!-- Column 1 -->
-              <div class="flex flex-col gap-4">
-                <section class="rounded-lg border border-gray-200 overflow-hidden">
+            <!-- 3 ustun. xl da karta belgilangan balandlik (h-[94vh]).
+                 1-2 ustun (strukturali, ma'lum ma'lumot) — to'liq ko'rinadi, scroll YO'Q.
+                 3-ustun (erkin matn: Yutuqlar/Tavsifnoma/Davlat tadbirlari) —
+                 bo'limlar teng bo'linib, faqat ular ICHIDA scroll qiladi.
+                 Kichik ekranda (ustunlar ustma-ust) tabiiy umumiy scroll. -->
+            <div class="flex-1 min-h-0 p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xl:grid-rows-1 gap-5 overflow-y-auto xl:overflow-hidden custom-scrollbar">
+              <!-- Column 1 — strukturali (scroll yo'q). xl da, agar ma'lumot
+                   kartadan oshib ketsa, ma'lumot yo'qolmasligi uchun ZAXIRA
+                   ustun-scroll (oddiy holatda scrollbar ko'rinmaydi). -->
+              <div class="flex flex-col gap-4 min-w-0 min-h-0 xl:overflow-y-auto custom-scrollbar">
+                <section class="rounded-lg border border-gray-200 overflow-hidden shrink-0">
                   <header class="px-4 py-2.5 bg-[#eef3f9] border-l-[3px] border-[#5b87b3]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#3f6286]">
                       {{ t('portfolio.personal') }}
@@ -330,7 +336,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                           <dt class="w-2/5 text-brand-muted shrink-0">
                             {{ row.l }}
                           </dt>
-                          <dd class="w-3/5 font-medium text-brand-dark">
+                          <dd class="w-3/5 font-medium text-brand-dark break-words min-w-0">
                             {{ row.v }}
                           </dd>
                         </div>
@@ -355,7 +361,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                           <dt class="w-2/5 text-brand-muted shrink-0">
                             {{ row.l }}
                           </dt>
-                          <dd class="w-3/5 font-medium text-brand-dark">
+                          <dd class="w-3/5 font-medium text-brand-dark break-words min-w-0">
                             {{ row.v }}
                           </dd>
                         </div>
@@ -381,7 +387,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                           <dt class="w-2/5 text-brand-muted shrink-0">
                             {{ row.l }}
                           </dt>
-                          <dd class="w-3/5 font-medium text-brand-dark">
+                          <dd class="w-3/5 font-medium text-brand-dark break-words min-w-0">
                             {{ row.v }}
                           </dd>
                         </div>
@@ -392,7 +398,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
 
                 <section
                   v-if="person.family.maritalStatus && person.family.maritalStatus.trim()"
-                  class="rounded-lg border border-gray-200 overflow-hidden"
+                  class="rounded-lg border border-gray-200 overflow-hidden shrink-0"
                 >
                   <header class="px-4 py-2.5 bg-[#eef3f9] border-l-[3px] border-[#5b87b3]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#3f6286]">
@@ -403,7 +409,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                     <div class="text-brand-muted mb-1">
                       {{ t('portfolio.maritalStatus') }}
                     </div>
-                    <div class="font-medium text-brand-dark">
+                    <div class="font-medium text-brand-dark break-words">
                       {{ person.family.maritalStatus }}
                     </div>
                   </div>
@@ -411,7 +417,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
 
                 <section
                   v-if="person.family.members && person.family.members.length"
-                  class="rounded-lg border border-gray-200 overflow-hidden"
+                  class="rounded-lg border border-gray-200 overflow-hidden shrink-0"
                 >
                   <header class="px-4 py-2.5 bg-[#eef3f9] border-l-[3px] border-[#5b87b3]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#3f6286]">
@@ -429,7 +435,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       >
                         {{ t(`portfolio.${member.relation}`) }}
                       </div>
-                      <div v-if="member.name" class="font-medium text-brand-dark">
+                      <div v-if="member.name" class="font-medium text-brand-dark break-words">
                         {{ member.name }}
                       </div>
                       <div
@@ -445,11 +451,12 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
               </div>
 
-              <!-- Column 2 -->
-              <div class="flex flex-col gap-4">
+              <!-- Column 2 — strukturali (scroll yo'q). Zaxira ustun-scroll
+                   xuddi 1-ustundagidek (oddiy holatda ko'rinmaydi). -->
+              <div class="flex flex-col gap-4 min-w-0 min-h-0 xl:overflow-y-auto custom-scrollbar">
                 <section
                   v-if="educationRows.length"
-                  class="rounded-lg border border-gray-200 overflow-hidden"
+                  class="rounded-lg border border-gray-200 overflow-hidden shrink-0"
                 >
                   <header class="px-4 py-2.5 bg-[#eef3e9] border-l-[3px] border-[#7d9b6e]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
@@ -463,14 +470,14 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       class="flex items-start gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
                     >
                       <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
-                      <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
+                      <dd class="w-3/5 font-medium text-brand-dark break-words min-w-0">{{ row.v }}</dd>
                     </div>
                   </dl>
                 </section>
 
                 <section
                   v-if="workRows.length"
-                  class="rounded-lg border border-gray-200 overflow-hidden"
+                  class="rounded-lg border border-gray-200 overflow-hidden shrink-0"
                 >
                   <header class="px-4 py-2.5 bg-[#eef3e9] border-l-[3px] border-[#7d9b6e]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
@@ -484,15 +491,15 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                       class="flex items-start gap-3 py-1.5 border-b border-gray-100 last:border-0 text-[13px]"
                     >
                       <dt class="w-2/5 text-brand-muted shrink-0">{{ row.l }}</dt>
-                      <dd class="w-3/5 font-medium text-brand-dark">{{ row.v }}</dd>
+                      <dd class="w-3/5 font-medium text-brand-dark break-words min-w-0">{{ row.v }}</dd>
                     </div>
                   </dl>
                 </section>
 
-                <!-- Sog'lig'i — alohida sarlavha blok, ranglar holatga qarab -->
+                <!-- Sog'lig'i — faqat sarlavha blok (cho'zilmaydi), ranglar holatga qarab -->
                 <section
                   v-if="person.work.health"
-                  class="rounded-lg border overflow-hidden"
+                  class="rounded-lg border overflow-hidden shrink-0"
                   :class="[healthClasses(person.work.healthKey).bg, 'border-gray-200']"
                 >
                   <header
@@ -509,19 +516,19 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 </section>
               </div>
 
-              <!-- Column 3 — 3 ta alohida bo'lim, Tavsifnoma chegarali cho'ziladi -->
-              <div class="flex flex-col gap-4">
+              <!-- Column 3 — 3 ta alohida bo'lim -->
+              <div class="flex flex-col gap-4 min-w-0 min-h-0">
                 <!-- 1. Yutuqlar -->
                 <section
                   v-if="person.achievements && person.achievements.length"
-                  class="rounded-lg border border-gray-200 overflow-hidden"
+                  class="rounded-lg border border-gray-200 overflow-hidden flex flex-col min-h-0 xl:flex-1"
                 >
-                  <header class="px-4 py-2.5 bg-[#eef3e9] border-l-[3px] border-[#7d9b6e]">
+                  <header class="shrink-0 px-4 py-2.5 bg-[#eef3e9] border-l-[3px] border-[#7d9b6e]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#536b46]">
                       {{ t('portfolio.achievements') }}
                     </h3>
                   </header>
-                  <ul class="px-4 py-2 max-h-[220px] overflow-y-auto custom-scrollbar">
+                  <ul class="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-4 py-2">
                     <li
                       v-for="(ach, idx) in person.achievements"
                       :key="idx"
@@ -537,18 +544,18 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                   </ul>
                 </section>
 
-                <!-- 2. Tavsifnoma — qolgan joyni egallaydi, lekin chegarali -->
+                <!-- 2. Tavsifnoma -->
                 <section
                   v-if="person.activity.description && person.activity.description.trim()"
-                  class="rounded-lg border border-gray-200 overflow-hidden flex flex-col flex-grow min-h-[180px] max-h-[400px]"
+                  class="rounded-lg border border-gray-200 overflow-hidden flex flex-col min-h-0 xl:flex-1"
                 >
-                  <header class="px-4 py-2.5 bg-[#fbefe4] border-l-[3px] border-[#e0935f] shrink-0">
+                  <header class="shrink-0 px-4 py-2.5 bg-[#fbefe4] border-l-[3px] border-[#e0935f]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#a8602f]">
                       {{ t('portfolio.description') }}
                     </h3>
                   </header>
-                  <div class="px-4 py-3 flex-grow overflow-y-auto custom-scrollbar min-h-0">
-                    <p class="text-[13px] text-brand-text leading-relaxed text-justify">
+                  <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-4 py-3">
+                    <p class="text-[13px] text-brand-text leading-relaxed text-justify break-words">
                       {{ person.activity.description }}
                     </p>
                   </div>
@@ -557,15 +564,15 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
                 <!-- 3. Davlat tadbirlari -->
                 <section
                   v-if="person.activity.stateEvents && person.activity.stateEvents.trim()"
-                  class="rounded-lg border border-gray-200 overflow-hidden"
+                  class="rounded-lg border border-gray-200 overflow-hidden flex flex-col min-h-0 xl:flex-1"
                 >
-                  <header class="px-4 py-2.5 bg-[#fef3e2] border-l-[3px] border-[#c98135]">
+                  <header class="shrink-0 px-4 py-2.5 bg-[#fef3e2] border-l-[3px] border-[#c98135]">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-[#8b5a25]">
                       {{ t('portfolio.stateEvents') }}
                     </h3>
                   </header>
-                  <div class="px-4 py-3 max-h-[160px] overflow-y-auto custom-scrollbar">
-                    <p class="text-[13px] text-brand-text leading-relaxed text-justify">
+                  <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-4 py-3">
+                    <p class="text-[13px] text-brand-text leading-relaxed text-justify break-words">
                       {{ person.activity.stateEvents }}
                     </p>
                   </div>

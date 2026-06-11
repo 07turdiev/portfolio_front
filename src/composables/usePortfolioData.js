@@ -1,5 +1,5 @@
 import { ref, computed, watch, effectScope } from 'vue'
-import { fetchDirections, fetchPeople, fetchDistrictMap } from '../services/api'
+import { fetchDirections, fetchPeople, fetchDistrictMap, reshapePerson } from '../services/api'
 import { i18n } from '../i18n'
 
 export const ALL_KEY = 'all'
@@ -47,35 +47,22 @@ const selectedPerson = ref(null)
 
 let loaded = false
 
-// Locale o'zgarganda barcha API ma'lumotlarini qaytadan yuklash (yangi tilda)
+// Til o'zgarganda QAYTA YUKLASH SHART EMAS: API allaqachon uchala tilni
+// qaytaradi va `reshapePerson`/`pickLang` joriy tilga reaktiv bog'liq —
+// `currentPeople` computed til o'zgarishida o'zi qayta hisoblanadi.
+// Bu yerda faqat ochiq modaldagi shaxsni yangi tildagi nusxaga moslaymiz.
 const localeScope = effectScope(true)
 localeScope.run(() => {
   watch(
     () => i18n.global.locale.value,
-    async () => {
-      if (!loaded) return
-      const loadedDirections = Object.keys(peopleByDirection.value)
-      peopleByDirection.value = {}
-      try {
-        const data = await fetchDirections()
-        directionsRaw.value = data.directions ?? []
-        await Promise.all(loadedDirections.map((k) => loadOnePublic(k)))
-      } catch (e) {
-        error.value = e
-      }
+    () => {
+      if (!selectedPerson.value) return
+      const id = selectedPerson.value.id
+      const fresh = currentPeople.value.find((p) => p.id === id)
+      if (fresh) selectedPerson.value = fresh
     }
   )
 })
-
-async function loadOnePublic(key) {
-  if (key === ALL_KEY) {
-    await Promise.all(directionsRaw.value.map(async (d) => {
-      peopleByDirection.value[d.key] = await fetchPeople(d.key)
-    }))
-  } else {
-    peopleByDirection.value[key] = await fetchPeople(key)
-  }
-}
 
 // "Barchasi" pseudo-direction prepended to the real five.
 const directions = computed(() => {
@@ -103,18 +90,43 @@ const selectedDirection = computed(() => {
   )
 })
 
+// Reshape keshi — xom obyekt × til bo'yicha. Har bir vakil har bir til uchun
+// faqat BIR MARTA reshape qilinadi; keyingi til almashtirishlar kesh-hit
+// (bir zumda) va obyekt identifikatori barqaror (Vue ortiqcha patch qilmaydi).
+// WeakMap — xom ma'lumot almashsa, eski keshlar avtomatik tozalanadi.
+const reshapeCache = new WeakMap()
+function reshapeCached(p, locale) {
+  let byLocale = reshapeCache.get(p)
+  if (!byLocale) {
+    byLocale = Object.create(null)
+    reshapeCache.set(p, byLocale)
+  }
+  let v = byLocale[locale]
+  if (!v) {
+    v = reshapePerson(p)
+    byLocale[locale] = v
+  }
+  return v
+}
+
+// XOM ma'lumotni joriy tilga moslab (reshapePerson) qaytaradi.
+// `locale` ni computed boshida o'qiymiz — shunda kesh-hit bo'lganda ham reaktiv
+// bog'liqlik saqlanadi va til almashganda computed qayta hisoblanadi.
 const currentPeople = computed(() => {
+  const locale = i18n.global.locale.value
   const key = selectedDirection.value?.key
   if (!key) return []
+  let raw
   if (key === ALL_KEY) {
-    const out = []
+    raw = []
     for (const d of directionsRaw.value) {
       const arr = peopleByDirection.value[d.key]
-      if (arr) out.push(...arr)
+      if (arr) raw.push(...arr)
     }
-    return out
+  } else {
+    raw = peopleByDirection.value[key] ?? []
   }
-  return peopleByDirection.value[key] ?? []
+  return raw.map((p) => reshapeCached(p, locale))
 })
 
 const isDistrictView = computed(() => !!selectedRegionKey.value)
