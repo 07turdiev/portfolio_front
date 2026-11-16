@@ -11,6 +11,9 @@ const {
   peopleSummary,
   searchQuery,
   genderFilter,
+  birthYear,
+  birthDate,
+  birthYearOptions,
   sortBy,
   awardCategory,
   awardType,
@@ -193,15 +196,48 @@ const nameOptions = computed(() => {
     <Transition
       enter-active-class="transition-all duration-200 ease-out overflow-hidden"
       enter-from-class="opacity-0 max-h-0"
-      enter-to-class="opacity-100 max-h-[200px]"
+      enter-to-class="opacity-100 max-h-[300px]"
       leave-active-class="transition-all duration-150 ease-in overflow-hidden"
-      leave-from-class="opacity-100 max-h-[200px]"
+      leave-from-class="opacity-100 max-h-[300px]"
       leave-to-class="opacity-0 max-h-0"
     >
       <div
         v-if="advancedOpen"
         class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3 shrink-0"
       >
+        <div class="relative">
+          <select
+            v-model="birthYear"
+            class="w-full appearance-none bg-gray-50 border border-gray-200 text-brand-dark font-medium text-sm pl-3 pr-9 py-2.5 rounded-lg cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors"
+            :title="t('filter.birthYear')"
+          >
+            <option value="">{{ t('filter.allBirthYears') }}</option>
+            <option v-for="y in birthYearOptions" :key="y" :value="y">
+              {{ y }}
+            </option>
+          </select>
+          <svg
+            class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-dark pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 9l-7 7-7-7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+        <input
+          v-model="birthDate"
+          type="date"
+          :title="t('filter.birthDate')"
+          :aria-label="t('filter.birthDate')"
+          class="w-full bg-gray-50 border border-gray-200 text-brand-dark font-medium text-sm px-3 py-2.5 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 transition-colors"
+        />
+        <div class="hidden md:block"></div>
         <div class="relative">
           <select
             v-model="awardCategory"

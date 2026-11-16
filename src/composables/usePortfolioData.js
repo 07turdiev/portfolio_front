@@ -17,6 +17,8 @@ const sortBy = ref('name-asc') // 'name-asc' | 'name-desc' | 'birth-asc' | 'birt
 const awardCategory = ref('')
 const awardType = ref('')
 const awardName = ref('')
+const birthYear = ref('') // '' | '1985'
+const birthDate = ref('') // '' | 'YYYY-MM-DD'
 
 // Cascading reset: setting parent clears children. Sync flush so chained
 // URL-driven sets (category, then type, then name) end up in the right state.
@@ -143,6 +145,24 @@ function birthEpoch(p) {
   return new Date(y || 0, (m || 1) - 1, d || 1).getTime()
 }
 
+// 'dd.mm.yyyy' -> 'yyyy-mm-dd' ('' agar sana yo'q)
+function birthIso(p) {
+  const s = p.personal?.birthDate
+  if (!s) return ''
+  const [d, m, y] = s.split('.')
+  return y && m && d ? `${y}-${m}-${d}` : ''
+}
+
+// Ma'lumotdagi mavjud tug'ilgan yillar (kamayish tartibida) — yil filtri uchun
+const birthYearOptions = computed(() => {
+  const years = new Set()
+  for (const p of currentPeople.value) {
+    const y = birthIso(p).slice(0, 4)
+    if (y) years.add(y)
+  }
+  return [...years].sort((a, b) => b - a)
+})
+
 // people filtered by region, district, gender, search; then sorted
 const filteredPeople = computed(() => {
   let list = currentPeople.value
@@ -154,6 +174,12 @@ const filteredPeople = computed(() => {
   }
   if (genderFilter.value !== 'all') {
     list = list.filter((p) => p.gender === genderFilter.value)
+  }
+  if (birthYear.value) {
+    list = list.filter((p) => birthIso(p).startsWith(birthYear.value))
+  }
+  if (birthDate.value) {
+    list = list.filter((p) => birthIso(p) === birthDate.value)
   }
   const q = searchQuery.value.trim().toLowerCase()
   if (q) {
@@ -275,6 +301,8 @@ export function usePortfolioData() {
   function resetFilters() {
     searchQuery.value = ''
     genderFilter.value = 'all'
+    birthYear.value = ''
+    birthDate.value = ''
     sortBy.value = 'name-asc'
     selectedRegionKey.value = null
     selectedDistrictId.value = null
@@ -319,6 +347,9 @@ export function usePortfolioData() {
     peopleSummary,
     searchQuery,
     genderFilter,
+    birthYear,
+    birthDate,
+    birthYearOptions,
     sortBy,
     awardCategory,
     awardType,

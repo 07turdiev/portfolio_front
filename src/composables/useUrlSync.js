@@ -1,6 +1,6 @@
 // Sync portfolio state ↔ URL.
 //   path  = /:directionKey       (e.g. /theater_circus, /all)
-//   query = ?region=&district=&gender=&sort=&q=&aff=&type=&name=
+//   query = ?region=&district=&gender=&byear=&bdate=&sort=&q=&aff=&type=&name=
 // Defaults are omitted from the URL to keep it clean.
 import { watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -27,6 +27,8 @@ export function useUrlSync() {
       p.selectedRegionKey.value = q.region || null
       p.selectedDistrictId.value = q.district || null
       p.genderFilter.value = q.gender || DEFAULT_GENDER
+      p.birthYear.value = q.byear || ''
+      p.birthDate.value = q.bdate || ''
       p.sortBy.value = q.sort || DEFAULT_SORT
       p.searchQuery.value = q.q || ''
       // Cascading sync watchers (in composable) fire sync; setting order matters.
@@ -48,6 +50,8 @@ export function useUrlSync() {
     if (p.genderFilter.value && p.genderFilter.value !== DEFAULT_GENDER) {
       query.gender = p.genderFilter.value
     }
+    if (p.birthYear.value) query.byear = p.birthYear.value
+    if (p.birthDate.value) query.bdate = p.birthDate.value
     if (p.sortBy.value && p.sortBy.value !== DEFAULT_SORT) {
       query.sort = p.sortBy.value
     }
@@ -82,6 +86,8 @@ export function useUrlSync() {
       p.selectedRegionKey,
       p.selectedDistrictId,
       p.genderFilter,
+      p.birthYear,
+      p.birthDate,
       p.sortBy,
       p.searchQuery,
       p.awardCategory,
